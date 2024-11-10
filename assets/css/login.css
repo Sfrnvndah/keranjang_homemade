@@ -1,0 +1,83 @@
+/* login.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 8px;
+}
+
+.login-form h2 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background-color: #555;
+}
+
+.login-form a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-form .social-login {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.login-form .social-login a {
+    color: #333;
+    font-size: 20px;
+}
+
+.register-link {
+    margin-top: 15px;
+}
+
+.register-link p {
+    font-size: 14px;
+    color: #333;
+}
+
+.register-link a {
+    color: #333;
+    font-weight: 500;
+    text-decoration: underline;
+}

@@ -92,10 +92,7 @@
                                 <li class="scroll-to-section">
                                     <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em;" aria-hidden="true"></i></a>
                                 </li>
-                            </ul>        
-                            <a class='menu-trigger'>
-                                <span>Menu</span>
-                            </a>
+                            </ul>
                         </nav>
                     </div>
                 </div>
@@ -502,6 +499,15 @@
                             <li><a href="content/contact_us.php">Contact Us</a></li>
                         </ul>
                     </div>
+                    <div class="col-lg-3">
+                        <h4>Useful Information</h4>
+                        <ul>
+                            <li><a href="#">Customer Support</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Training Information</a></li>
+                        </ul>
+                    </div>
                     <div class="col-lg-12">
                         <div class="under-footer">
                             <p>Copyright © 2024 Pak Tara Craft., Ltd. All Rights Reserved. 
@@ -552,6 +558,5 @@
                 });
             });
         </script>
-
-  </body>
+    </body>
 </html>

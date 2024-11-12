@@ -7,16 +7,15 @@
 }
 
 .search-form .btn-primary {
-    background-color: #4CAF50;
-    border-color: #4CAF50;
+    background-color: #794553;
+    border-color: #794553;
 }
 
 .search-form .btn-primary:hover {
-    background-color: #45a049;
-    border-color: #45a049;
+    background-color: #794553;
+    border-color: #794553;
 }
 
-/* Remove border and background to make the form blend into the page */
 .filter-form {
     padding: 0;
     background: none;
@@ -25,45 +24,40 @@
     margin-top: 24px;
 }
 
-/* Align checkboxes and button horizontally */
 .filter-form .form-group {
     display: flex;
-    align-items: center; /* Vertically center the items */
-    justify-content: flex-start; /* Align them to the left */
-    gap: 15px; /* Space between checkboxes and button */
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
 }
 
-/* Make sure each checkbox is inline */
 .filter-form .form-check {
-    margin-bottom: 0; /* Remove bottom margin */
+    margin-bottom: 0;
 }
 
-/* Ensure the checkbox label is close to the checkbox */
 .filter-form .form-check label {
     margin-left: 5px;
 }
 
 .filter-form button {
-    background-color: #28a745; /* Warna latar hijau */
-    border-color: #28a745;
+    background-color: #794553;
+    border-color: #794553;
     color: white;
-    padding: 5px 10px;  /* Mengurangi padding untuk memperkecil tombol */
+    padding: 5px 10px;
     border-radius: 5px;
-    font-size: 12px;  /* Mengurangi ukuran font */
+    font-size: 12px;
     transition: background-color 0.3s;
-    white-space: nowrap; /* Menghindari teks terpotong */
-    width: auto;  /* Biarkan tombol menyesuaikan dengan teks, jangan tetap pada ukuran lebar */
+    white-space: nowrap;
+    width: auto;
 }
 
-/* Change button color on hover */
 .filter-form button:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
+    background-color: #794553;
+    border-color: #794553;
 }
 
-/* Ensure the form doesn't break into multiple lines on small screens */
 @media (max-width: 768px) {
     .filter-form .form-group {
-        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        flex-wrap: wrap;
     }
 }

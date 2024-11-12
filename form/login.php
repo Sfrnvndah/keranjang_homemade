@@ -39,7 +39,7 @@
                     <input type="text" name="username" placeholder="Username" required>
                     <input type="password" name="password" placeholder="Password" required>
                     <button type="submit">Login</button>
-                    <p style="color: white;">.</p>
+                    <p style="color: #9C6674;">.</p>
                     <p><a href="forgot_password.php">Forgot Password?</a></p>
                 </form>
                 <div class="register-link">

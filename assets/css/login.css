@@ -5,14 +5,14 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f9f9f9;
+    background-color: #FFF;
 }
 
 .login-form {
     width: 100%;
     max-width: 400px;
     padding: 40px;
-    background: #fff;
+    background: #9C6674;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     border-radius: 8px;
@@ -20,7 +20,7 @@
 
 .login-form h2 {
     font-weight: 600;
-    color: #333;
+    color: #FFF;
     margin-bottom: 20px;
 }
 
@@ -29,15 +29,15 @@
     width: 100%;
     padding: 12px 15px;
     margin: 8px 0;
-    border: 1px solid #ddd;
+    border: 1px solid #9C6674;
     border-radius: 4px;
 }
 
 .login-form button {
     width: 100%;
     padding: 12px;
-    background-color: #333;
-    color: #fff;
+    background-color: #794553;
+    color: #FFF;
     font-size: 16px;
     border: none;
     border-radius: 4px;
@@ -46,11 +46,11 @@
 }
 
 .login-form button:hover {
-    background-color: #555;
+    background-color: #794553;
 }
 
 .login-form a {
-    color: #333;
+    color: #FFF;
     text-decoration: none;
     font-size: 14px;
 }
@@ -63,7 +63,7 @@
 }
 
 .login-form .social-login a {
-    color: #333;
+    color: #FFF;
     font-size: 20px;
 }
 
@@ -73,11 +73,11 @@
 
 .register-link p {
     font-size: 14px;
-    color: #333;
+    color: #FFF;
 }
 
 .register-link a {
-    color: #333;
+    color: #FFF;
     font-weight: 500;
     text-decoration: underline;
 }

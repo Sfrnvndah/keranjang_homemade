@@ -157,12 +157,12 @@ body {
 
 .main-border-button a:hover {
   background-color: #fff;
-  color: #2a2a2a;
+  color: #9C6674;
 }
 
 .main-white-button a {
   font-size: 13px;
-  color: #2a2a2a;
+  color: #9C6674;
   background-color: #fff;
   padding: 12px 25px;
   display: inline-block;
@@ -189,7 +189,7 @@ body {
 .section-heading h2 {
   font-size: 34px;
   font-weight: 700;
-  color: #2a2a2a;
+  color: #794553;
 }
 
 .section-heading span {
@@ -727,7 +727,7 @@ banner
   left: 15px;
   bottom: 15px;
   text-align: center;
-  background-color: rgba(42,42,42,.97);
+  background-color: #9C6674;
   opacity: 0;
   visibility: hidden;
   transition: all 0.5s;
@@ -1299,13 +1299,13 @@ Explore
 }
 
 #explore .left-content .main-border-button a {
-  color: #2a2a2a;
-  border-color: #2a2a2a;
+  color: #9C6674;
+  border-color: #9C6674;
   margin-top: 35px;
 }
 
 #explore .left-content .main-border-button a:hover {
-  background-color: #2a2a2a;
+  background-color: #9C6674;
   color: #fff;
 }
 
@@ -1457,7 +1457,7 @@ Subscribe
   display: inline-block;
   text-align: center;
   line-height: 44px;
-  background-color: #2a2a2a;
+  background-color: #9C6674;
   box-shadow: none;
   border: 1px solid transparent;
   color: #fff;
@@ -1466,8 +1466,8 @@ Subscribe
 
 .subscribe form button:hover {
   background-color: #fff;
-  border: 1px solid #2a2a2a;
-  color: #2a2a2a;
+  border: 1px solid #9C6674;
+  color: #9C6674;
 }
 
 .subscribe ul li {
@@ -1502,7 +1502,7 @@ footer
 footer {
   margin-top: 60px;
   padding: 60px 0px 30px 0px;
-  background-color: #2a2a2a;
+  background-color: #9C6674;
 }
 
 footer .logo {
@@ -1702,18 +1702,18 @@ Products Page
 #products .pagination ul li a {
   width: 44px;
   height: 44px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #794553;
   display: inline-block;
   text-align: center;
   line-height: 44px;
   font-size: 14px;
   font-weight: 500;
-  color: #2a2a2a;
+  color: #794553;
 }
 
 #products .pagination ul li a:hover,
 #products .pagination ul li.active a {
-  background-color: #2a2a2a;
+  background-color: #794553;
   color: #fff;
 }
 
@@ -1730,15 +1730,69 @@ Single Product Page
 }
 
 #product .left-images img {
-  width: 100%;
+  max-width: 90%;
   overflow: hidden;
   margin-bottom: 30px;
+  transition: transform 0.5s ease-in-out;
 }
 
-#product .right-content {
+#product .left-images {
   position: relative;
+  width: 100%;
+}
+
+#product .left-images .prev,
+#product .left-images .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#product .left-images .image-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#product .left-images button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#product .left-images button:focus {
+  outline: none;
+  border: none;
+}
+
+#product .left-images .prev {
+  left: -40px;
+}
+
+#product .left-images .next {
+  right: -35px;
+}
+
+/* #product .left-images img {
+  max-width: 50%;
+  height: auto;
+  margin-bottom: 30px;
+} */
+
+#product .right-content {
+  /* position: relative; */
   z-index: 3;
   background-color: #fff;
+  padding-left: -2000px;
+  margin-left: auto;
 }
 
 #product .right-content h4 {
@@ -1842,13 +1896,13 @@ Single Product Page
 }
 
 .total .main-border-button a {
-  border-color: #2a2a2a;
-  color: #2a2a2a;
+  border-color: #9C6674;
+  color: #9C6674;
 }
 
 .total .main-border-button a:hover {
   color: #fff;
-  background-color: #2a2a2a;
+  background-color: #9C6674;
 }
 
 .quantity {
@@ -2201,7 +2255,7 @@ contact Us Page
   display: inline-block;
   text-align: center;
   line-height: 44px;
-  background-color: #2a2a2a;
+  background-color: #9C6674;
   box-shadow: none;
   border: 1px solid transparent;
   color: #fff;
@@ -2210,8 +2264,8 @@ contact Us Page
 
 .contact-us form button:hover {
   background-color: #fff;
-  border: 1px solid #2a2a2a;
-  color: #2a2a2a;
+  border: 1px solid #9C6674;
+  color: #9C6674;
 }
 
 
@@ -2301,7 +2355,7 @@ responsive
 
 #preloader {
   overflow: hidden;
-  background-color: #2a2a2a;
+  background-color: #9C6674;
   left: 0;
   right: 0;
   top: 0;
@@ -2376,4 +2430,8 @@ responsive
   100% {
     opacity: 0;
   }
+}
+
+.scroll-to-section a i {
+  color: #794553;
 }

@@ -76,9 +76,7 @@
                                     <a href="javascript:;">Product</a>
                                     <ul>
                                         <li><a href="product_lists.php">Product Lists</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
+                                        <li><a href="check_out.php">Check Out</a></li>
                                     </ul>
                                 </li>
                                 <li class="submenu">
@@ -86,8 +84,7 @@
                                     <ul>
                                         <li><a href="../content/about_us.php">About Us</a></li>
                                         <li><a href="../content/contact_us.php">Contact Us</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
+                                        <li><a href="../content/training.php">Training</a></li>
                                     </ul>
                                 </li>
                                 <li class="scroll-to-section">
@@ -150,8 +147,8 @@
                                 <div class="thumb">
                                     <div class="hover-content">
                                         <ul>
-                                            <li><a href="single-product.php?product_id=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-eye"></i></a></li>
-                                            <li><a href="cart.php?add=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-shopping-cart"></i></a></li>
+                                            <li><a href="product_detail.php?product_id=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-eye" style="color: #794553"></i></a></li>
+                                            <li><a href="cart.php?add=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
                                         </ul>
                                     </div>
                                     <img src="../assets/images/<?= htmlspecialchars($firstImage) ?>" alt="<?= htmlspecialchars($row['product_name']) ?>">
@@ -170,15 +167,15 @@
                         <div class="pagination">
                             <ul>
                                 <?php if ($page > 1): ?>
-                                    <li><a href="?page=<?= $page - 1 ?>&query=<?= urlencode($searchQuery) ?>&category[]=<?= implode('&category[]=', $selectedCategories) ?>"><</a></li>
+                                    <li><a href="?page=<?= $page - 1 ?>&query=<?= urlencode($searchQuery) ?><?= !empty($selectedCategories) ? '&category[]=' . implode('&category[]=', $selectedCategories) : '' ?>"><</a></li>
                                 <?php endif; ?>
 
                                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="<?= ($i === $page) ? 'active' : '' ?>"><a href="?page=<?= $i ?>&query=<?= urlencode($searchQuery) ?>&category[]=<?= implode('&category[]=', $selectedCategories) ?>"><?= $i ?></a></li>
+                                    <li class="<?= ($i === $page) ? 'active' : '' ?>"><a href="?page=<?= $i ?>&query=<?= urlencode($searchQuery) ?><?= !empty($selectedCategories) ? '&category[]=' . implode('&category[]=', $selectedCategories) : '' ?>"><?= $i ?></a></li>
                                 <?php endfor; ?>
 
                                 <?php if ($page < $totalPages): ?>
-                                    <li><a href="?page=<?= $page + 1 ?>&query=<?= urlencode($searchQuery) ?>&category[]=<?= implode('&category[]=', $selectedCategories) ?>">></a></li>
+                                    <li><a href="?page=<?= $page + 1 ?>&query=<?= urlencode($searchQuery) ?><?= !empty($selectedCategories) ? '&category[]=' . implode('&category[]=', $selectedCategories) : '' ?>">></a></li>
                                 <?php endif; ?>
                             </ul>
                         </div>

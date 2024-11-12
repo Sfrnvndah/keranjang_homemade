@@ -31,7 +31,7 @@
 }
 
 .popup-content button {
-    background: #333;
+    background: #794553;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -40,7 +40,7 @@
 }
 
 .popup-content button:hover {
-    background: #555;
+    background: #9C6674;
 }
 
 @keyframes fadeIn {

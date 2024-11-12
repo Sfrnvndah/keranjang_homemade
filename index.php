@@ -72,9 +72,7 @@
                                     <a href="javascript:;">Product</a>
                                     <ul>
                                         <li><a href="pages/product_lists.php">Product Lists</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
+                                        <li><a href="pages/check_out.php">Check Out</a></li>
                                     </ul>
                                 </li>
                                 <li class="submenu">
@@ -82,15 +80,14 @@
                                     <ul>
                                         <li><a href="content/about_us.php">About Us</a></li>
                                         <li><a href="content/contact_us.php">Contact Us</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
+                                        <li><a href="content/training.php">Training</a></li>
                                     </ul>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em;" aria-hidden="true"></i></a>
+                                    <a href="pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #794553;" aria-hidden="true"></i></a>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em;" aria-hidden="true"></i></a>
+                                    <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em; color: #794553;" aria-hidden="true"></i></a>
                                 </li>
                             </ul>
                         </nav>
@@ -155,7 +152,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <img src="assets/images/diagonal-chic-tote.jpg">
+                                            <img src="assets/images/diagonal-chic-tote-1.jpg">
                                         </div>
                                     </div>
                                 </div>
@@ -227,8 +224,8 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #794553"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
                                                 </ul>
                                             </div>
                                             <?php
@@ -271,8 +268,8 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #794553"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
                                                 </ul>
                                             </div>
                                             <?php
@@ -315,8 +312,8 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #794553"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
                                                 </ul>
                                             </div>
                                             <?php
@@ -359,8 +356,8 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #794553"></i></a></li>
+                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
                                                 </ul>
                                             </div>
                                             <?php
@@ -444,15 +441,15 @@
                         <div class="row">
                             <div class="col-6">
                                 <ul>
-                                    <li>Lokasi Toko :<br><span>Gg. Melon, Pelindu, Karangrejo, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124, Indonesia</span></li>
-                                    <li>Nomor Telepon :<br><span>+62 897-6374-888</span></li>
+                                    <li style="color: #794553; font-weight: bold;">Lokasi Toko :<br><span>Gg. Melon, Pelindu, Karangrejo, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124, Indonesia</span></li>
+                                    <li style="color: #794553; font-weight: bold;">Nomor Telepon :<br><span>+62 897-6374-888</span></li>
                                 </ul>
                             </div>
                             <div class="col-6">
                                 <ul>
-                                    <li>Jam Buka :<br><span>24 Jam</span></li>
-                                    <li>Email : <br><span>lidyaningrum8379@gmail.com</span></li>
-                                    <li>Sosial Media :<br>
+                                    <li class="info-label" style="color: #794553; font-weight: bold;">Jam Buka :<br><span>24 Jam</span></li>
+                                    <li class="info-label" style="color: #794553; font-weight: bold;">Email :<br><span>lidyaningrum8379@gmail.com</span></li>
+                                    <li class="info-label" style="color: #794553; font-weight: bold;">Social Media :<br>
                                         <span>
                                             <a href="https://www.instagram.com/paktaracraft?igsh=MTFjaHFtNHo5dTJhOQ==">Instagram</a>,
                                             <a href="https://www.tiktok.com/@paktaracraft1705_83?_t=8rHExNw65VY&_r=1">TikTok</a>,

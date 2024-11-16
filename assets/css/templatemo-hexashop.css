@@ -157,12 +157,12 @@ body {
 
 .main-border-button a:hover {
   background-color: #fff;
-  color: #9C6674;
+  color: #00827f;
 }
 
 .main-white-button a {
   font-size: 13px;
-  color: #9C6674;
+  color: #00827f;
   background-color: #fff;
   padding: 12px 25px;
   display: inline-block;
@@ -189,7 +189,7 @@ body {
 .section-heading h2 {
   font-size: 34px;
   font-weight: 700;
-  color: #794553;
+  color: #00827f;
 }
 
 .section-heading span {
@@ -727,7 +727,7 @@ banner
   left: 15px;
   bottom: 15px;
   text-align: center;
-  background-color: #9C6674;
+  background-color: #00827f;
   opacity: 0;
   visibility: hidden;
   transition: all 0.5s;
@@ -1299,13 +1299,13 @@ Explore
 }
 
 #explore .left-content .main-border-button a {
-  color: #9C6674;
-  border-color: #9C6674;
+  color: #00827f;
+  border-color: #00827f;
   margin-top: 35px;
 }
 
 #explore .left-content .main-border-button a:hover {
-  background-color: #9C6674;
+  background-color: #00827f;
   color: #fff;
 }
 
@@ -1457,7 +1457,7 @@ Subscribe
   display: inline-block;
   text-align: center;
   line-height: 44px;
-  background-color: #9C6674;
+  background-color: #00827f;
   box-shadow: none;
   border: 1px solid transparent;
   color: #fff;
@@ -1466,8 +1466,8 @@ Subscribe
 
 .subscribe form button:hover {
   background-color: #fff;
-  border: 1px solid #9C6674;
-  color: #9C6674;
+  border: 1px solid #00827f;
+  color: #00827f;
 }
 
 .subscribe ul li {
@@ -1502,7 +1502,7 @@ footer
 footer {
   margin-top: 60px;
   padding: 60px 0px 30px 0px;
-  background-color: #9C6674;
+  background-color: #00827f;
 }
 
 footer .logo {
@@ -1702,18 +1702,18 @@ Products Page
 #products .pagination ul li a {
   width: 44px;
   height: 44px;
-  border: 1px solid #794553;
+  border: 1px solid #00827f;
   display: inline-block;
   text-align: center;
   line-height: 44px;
   font-size: 14px;
   font-weight: 500;
-  color: #794553;
+  color: #00827f;
 }
 
 #products .pagination ul li a:hover,
 #products .pagination ul li.active a {
-  background-color: #794553;
+  background-color: #00827f;
   color: #fff;
 }
 
@@ -1896,13 +1896,13 @@ Single Product Page
 }
 
 .total .main-border-button a {
-  border-color: #9C6674;
-  color: #9C6674;
+  border-color: #00827f;
+  color: #00827f;
 }
 
 .total .main-border-button a:hover {
   color: #fff;
-  background-color: #9C6674;
+  background-color: #00827f;
 }
 
 .quantity {
@@ -2255,7 +2255,7 @@ contact Us Page
   display: inline-block;
   text-align: center;
   line-height: 44px;
-  background-color: #9C6674;
+  background-color: #00827f;
   box-shadow: none;
   border: 1px solid transparent;
   color: #fff;
@@ -2264,8 +2264,8 @@ contact Us Page
 
 .contact-us form button:hover {
   background-color: #fff;
-  border: 1px solid #9C6674;
-  color: #9C6674;
+  border: 1px solid #00827f;
+  color: #00827f;
 }
 
 
@@ -2355,7 +2355,7 @@ responsive
 
 #preloader {
   overflow: hidden;
-  background-color: #9C6674;
+  background-color: #00827f;
   left: 0;
   right: 0;
   top: 0;
@@ -2433,5 +2433,5 @@ responsive
 }
 
 .scroll-to-section a i {
-  color: #794553;
+  color: #00827f;
 }

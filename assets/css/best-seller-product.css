@@ -1,0 +1,58 @@
+.product-sale {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    position: relative;
+    height: 80px;
+}
+
+.circle {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.circle span {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.circle p {
+    margin-top: 3px;
+    font-size: 10px;
+}
+
+.product-legend-vertical {
+    display: flex;
+    flex-direction: column; /* Membuat elemen vertikal */
+    align-items: flex-start; /* Rata kiri */
+    margin-bottom: 15px; /* Jarak antara legend dan lingkaran */
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; /* Jarak antar item */
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.legend-label {
+    font-size: 12px; /* Ukuran teks label */
+    color: #333; /* Warna teks label */
+}

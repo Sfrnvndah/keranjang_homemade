@@ -79,8 +79,8 @@
                     <!-- Grafik Penjualan -->
                     <div class="col-lg-8">
                         <div class="dashboard-card">
-                            <h4>Grafik Penjualan Tahun 2024</h4>
-                            <input id="year-picker" type="text" placeholder="Pilih Tahun" />
+                            <h4>Grafik Penjualan</h4>
+                            <select id="year-filter">></select>
                             <select id="sales-filter">
                                 <option value="all">Semua Penjualan</option>
                                 <option value="online">Penjualan Online</option>
@@ -89,7 +89,6 @@
                             <canvas id="salesChart"></canvas>
                         </div>
                     </div>
-
                     <!-- Statistik Pesanan dan Pendapatan -->                    
                     <div class="col-lg-12">
                         <div class="row">
@@ -99,7 +98,6 @@
                                     <p>Total Pesanan: <span id="order-count">123</span></p>
                                 </div>
                             </div>
-                            
                             <div class="col-lg-6">
                                 <div class="dashboard-card">
                                     <h4>Statistik Pendapatan</h4>
@@ -108,7 +106,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Pesanan Baru dan Notifikasi Update -->
                     <div class="col-lg-12">
                         <div class="row">
@@ -123,7 +120,6 @@
                                     </ul>
                                 </div>
                             </div>
-                            
                             <div class="col-lg-6">
                                 <div class="dashboard-card">
                                     <h4>Notifikasi Update</h4>
@@ -143,16 +139,6 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                // Tahun
-                flatpickr("#year-picker", {
-                    dateFormat: "Y",
-                    onChange: function(selectedDates, dateStr, instance) {
-                        const year = dateStr;
-                        console.log('Tahun terpilih:', year);
-                        updateChartForYear(year);
-                    }
-                });
-                
                 fetch('graphics/sales_data.json')
                 .then(response => response.json())
                 .then(data => {
@@ -167,18 +153,27 @@
                                     label: 'Online Sales',
                                     data: data.online_sales,
                                     borderColor: 'rgb(75, 192, 192)',
-                                    fill: false
+                                    backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                                    fill: true, // Fill grafik
+                                    tension: 0.4 // Efek lengkung/gelombang
                                 },
                                 {
                                     label: 'Offline Sales',
                                     data: data.offline_sales,
                                     borderColor: 'rgb(255, 99, 132)',
-                                    fill: false
+                                    backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                                    fill: true, // Fill grafik
+                                    tension: 0.4 // Efek lengkung/gelombang
                                 }
                             ]
                         },
                         options: {
                             responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
                             scales: {
                                 x: {
                                     title: {
@@ -190,79 +185,88 @@
                                     title: {
                                         display: true,
                                         text: 'Sales Amount'
-                                    }
+                                    },
+                                    beginAtZero: true
                                 }
                             }
                         }
                     });
-                    // Filter Penjualan
-                    const filter = document.getElementById('sales-filter');
-                    filter.addEventListener('change', function(event) {
-                        const value = event.target.value;
-                        if (value === 'online') {
-                            salesChart.data.datasets = [{
-                                label: 'Online Sales',
-                                data: data.online_sales,
-                                borderColor: 'rgb(75, 192, 192)',
-                                fill: false
-                            }];
-                        } else if (value === 'offline') {
-                            salesChart.data.datasets = [{
-                                label: 'Offline Sales',
-                                data: data.offline_sales,
-                                borderColor: 'rgb(255, 99, 132)',
-                                fill: false
-                            }];
-                        } else {
+                    // Memasukkan data tahun ke dropdown
+                    const yearSelect = document.getElementById('year-filter');
+                    data.years.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearSelect.appendChild(option);
+                    });
+                    // Set tahun awal ke dropdown dan update grafik
+                    yearSelect.value = data.years[0]; // Set tahun pertama sebagai default
+                    updateChart(data, yearSelect.value); // Update chart dengan data tahun pertama
+                    // Update grafik berdasarkan tahun yang dipilih
+                    yearSelect.addEventListener('change', function(event) {
+                        const selectedYear = event.target.value;
+                        updateChart(data, selectedYear);
+                    });
+                    // Filter dan update chart berdasarkan tahun yang dipilih
+                    function updateChart(data, selectedYear) {
+                        const filteredLabels = [];
+                        const filteredOnlineSales = [];
+                        const filteredOfflineSales = [];
+                        const filteredTotalSales = [];
+                        data.labels.forEach((label, index) => {
+                            if (label.includes(selectedYear)) {
+                                filteredLabels.push(label.replace(`${selectedYear}-`, ''));
+                                filteredOnlineSales.push(data.online_sales[index]);
+                                filteredOfflineSales.push(data.offline_sales[index]);
+                                filteredTotalSales.push(data.total_sales[index]);
+                            }
+                        });
+                        // Update data grafik
+                        salesChart.data.labels = filteredLabels;
+                        // Update dataset sesuai dengan pilihan filter
+                        const filterValue = document.getElementById('sales-filter').value;
+                        if (filterValue === 'online') {
                             salesChart.data.datasets = [
                                 {
                                     label: 'Online Sales',
-                                    data: data.online_sales,
+                                    data: filteredOnlineSales,
                                     borderColor: 'rgb(75, 192, 192)',
-                                    fill: false
-                                },
+                                    backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                                    fill: true,
+                                    tension: 0.4
+                                }
+                            ];
+                        } else if (filterValue === 'offline') {
+                            salesChart.data.datasets = [
                                 {
                                     label: 'Offline Sales',
-                                    data: data.offline_sales,
+                                    data: filteredOfflineSales,
                                     borderColor: 'rgb(255, 99, 132)',
-                                    fill: false
+                                    backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                                    fill: true,
+                                    tension: 0.4
+                                }
+                            ];
+                        } else {
+                            salesChart.data.datasets = [
+                                {
+                                    label: 'Total Sales',
+                                    data: filteredTotalSales,
+                                    borderColor: 'rgb(54, 162, 235)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.3)',
+                                    fill: true,
+                                    tension: 0.4
                                 }
                             ];
                         }
                         salesChart.update();
+                    }
+                    // Filter Penjualan (Semua, Online, Offline)
+                    const filter = document.getElementById('sales-filter');
+                    filter.addEventListener('change', function(event) {
+                        const selectedYear = yearSelect.value;
+                        updateChart(data, selectedYear); // Update chart berdasarkan pilihan filter
                     });
-                    // Tahun
-                    function updateChartForYear(year) {
-                        const filteredData = filterDataByYear(year, data);
-                        if (filteredData.labels.length === 0) {
-                            // Menampilkan pesan jika tidak ada data untuk tahun yang dipilih
-                            alert('Tidak ada data untuk tahun ' + year); // Kamu bisa mengganti ini dengan cara lain, seperti menampilkan teks di halaman
-                        } else {
-                            salesChart.data.labels = filteredData.labels;
-                            salesChart.data.datasets[0].data = filteredData.online_sales;
-                            salesChart.data.datasets[1].data = filteredData.offline_sales;
-                            salesChart.update();
-                        }
-                    }
-                    // Tahun
-                    function filterDataByYear(year, data) {
-                        let filteredLabels = [];
-                        let filteredOnlineSales = [];
-                        let filteredOfflineSales = [];
-                        for (let i = 0; i < data.labels.length; i++) {
-                            let month = data.labels[i];
-                            if (month.includes(year)) {
-                                filteredLabels.push(month);
-                                filteredOnlineSales.push(data.online_sales[i]);
-                                filteredOfflineSales.push(data.offline_sales[i]);
-                            }
-                        }
-                        return {
-                            labels: filteredLabels,
-                            online_sales: filteredOnlineSales,
-                            offline_sales: filteredOfflineSales
-                        };
-                    }
                 })
                 .catch(error => {
                     console.error('Error loading the sales data:', error);

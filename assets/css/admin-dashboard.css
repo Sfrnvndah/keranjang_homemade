@@ -17,6 +17,51 @@
     margin-bottom: 15px;
 }
 
+.dashboard-card h5 {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.card-header h6 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #234c63;
+}
+
+.card-header .view-all:hover {
+    color: #FFF;
+}
+
+.order-status {
+    text-transform: capitalize;
+}
+
+    .order-status.Online.Completed {
+        background-color: #d4f4e0;
+        color: #2eb872;
+    }
+    .order-status.Online.Pending {
+        background-color: #fff4d4;
+        color: #e5a700;
+    }
+    .order-status.Online.Canceled {
+        background-color: #f4d4d4;
+        color: #e52e2e;
+    }
+
+    .order-status.Offline.Completed {
+        background-color: #e0f4d4;
+        color: #5cb85c;
+    }
+    .order-status.Offline.Pending {
+        background-color: #fff0d4;
+        color: #ffae42;
+    }
+    .order-status.Offline.Canceled {
+        background-color: #f4e0e0;
+        color: #d9534f;
+    }
+
 .col-lg-8 {
     flex: 0 0 100%;
     max-width: 100%;
@@ -41,6 +86,12 @@
     justify-content: center;
 }
 
+.order-list li {
+    font-size: 15px;
+    line-height: 1.5;
+    color: black;
+}
+
 .order-list, .notification-list {
     list-style: none;
     padding: 0;
@@ -60,12 +111,18 @@
         flex: 0 0 100%;
         max-width: 100%;
     }
+
     .dashboard-card {
         padding: 15px;
     }
+
     .chart-placeholder {
         height: 200px;
     }
+}
+
+.bold-title {
+    font-weight: bold;
 }
 
 .chart-filter {
@@ -96,14 +153,41 @@
     flex: 1;
 }
 
-/* Mengurangi margin antar kolom */
 .row {
     margin-left: -15px;
     margin-right: -15px;
 }
 
-/* Mengatur padding dalam kolom agar lebih rapat */
 .col-lg-8, .col-lg-6, .col-lg-12 {
     padding-left: 15px;
     padding-right: 15px;
 }
+
+.dashboard-card a {
+    font-size: 13px;
+    color: #cdcdcd;
+}
+  
+.dashboard-card a:hover {
+    color: #FFF;
+}
+
+.hover-effect {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.hover-effect:hover {
+    background-color: rgba(0, 130, 127, 10);
+    color: #FFF;
+}
+
+.hover-effect a {
+    font-size: 13px;
+    color: rgb(71, 71, 71);
+    text-decoration: none;
+}
+
+.hover-effect:hover a {
+    color: #cdcdcd;
+}
+

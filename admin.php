@@ -4,7 +4,9 @@
     $output = shell_exec($command);
     echo $output;
     require 'database/connection.php';
+    // Produk Terlaris Per-Tahun
     try {
+        $currentYear = date('Y');
         $query = "
             SELECT 
                 p.product_name,
@@ -18,7 +20,11 @@
                     product_id, 
                     SUM(quantity) AS total_online_quantity
                 FROM 
-                    order_items
+                    order_items oi
+                LEFT JOIN 
+                    orders o ON oi.order_id = o.order_id
+                WHERE 
+                    YEAR(o.order_date) = :currentYear
                 GROUP BY 
                     product_id
             ) online ON p.product_id = online.product_id
@@ -27,7 +33,11 @@
                     product_id, 
                     SUM(quantity) AS total_offline_quantity
                 FROM 
-                    offline_order_items
+                    offline_order_items oi
+                LEFT JOIN 
+                    offline_orders oo ON oi.offline_order_id = oo.offline_order_id
+                WHERE 
+                    YEAR(oo.order_date) = :currentYear
                 GROUP BY 
                     product_id
             ) offline ON p.product_id = offline.product_id
@@ -36,16 +46,95 @@
             LIMIT 3;
         ";
         $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
         $stmt->execute();
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $productCircles = [
             'colors' => ['rgba(0, 130, 127, 0.8)', 'rgba(102, 185, 183, 0.8)', 'rgba(0, 70, 68, 0.8)'],
-            'sizes' => [90, 80, 70],
+            'sizes' => [95, 85, 75],
         ];
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
 
+    // Total Penjualan Per-Tahun
+    try {
+        $currentYear = date('Y');
+        $queryTotalSales = "
+            SELECT 
+                COALESCE(SUM(online.total_online_quantity), 0) AS total_online_sales,
+                COALESCE(SUM(offline.total_offline_quantity), 0) AS total_offline_sales,
+                COALESCE(SUM(online.total_online_quantity), 0) + COALESCE(SUM(offline.total_offline_quantity), 0) AS total_sales
+            FROM (
+                SELECT 
+                    SUM(quantity) AS total_online_quantity
+                FROM 
+                    order_items oi
+                LEFT JOIN 
+                    orders o ON oi.order_id = o.order_id
+                WHERE 
+                    YEAR(o.order_date) = :currentYear
+            ) online, (
+                SELECT 
+                    SUM(quantity) AS total_offline_quantity
+                FROM 
+                    offline_order_items oi
+                LEFT JOIN 
+                    offline_orders oo ON oi.offline_order_id = oo.offline_order_id
+                WHERE 
+                    YEAR(oo.order_date) = :currentYear
+            ) offline;
+        ";
+        $stmtTotalSales = $pdo->prepare($queryTotalSales);
+        $stmtTotalSales->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
+        $stmtTotalSales->execute();
+        $sales = $stmtTotalSales->fetch(PDO::FETCH_ASSOC);
+        $totalSales = $sales['total_sales'] ?? 0;
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+
+    try {
+        $currentYear = date('Y');
+        $queryRevenue = "
+            SELECT 
+                COALESCE(SUM(online.total_online_amount), 0) AS total_online_revenue,
+                COALESCE(SUM(offline.total_offline_amount), 0) AS total_offline_revenue,
+                COALESCE(SUM(online.total_online_amount), 0) + COALESCE(SUM(offline.total_offline_amount), 0) AS total_revenue
+            FROM (
+                SELECT 
+                    SUM(total_amount) AS total_online_amount
+                FROM 
+                    orders
+                WHERE 
+                    YEAR(order_date) = :currentYear
+            ) online, (
+                SELECT 
+                    SUM(total_amount) AS total_offline_amount
+                FROM 
+                    offline_orders
+                WHERE 
+                    YEAR(order_date) = :currentYear
+            ) offline;
+        ";
+        $stmtRevenue = $pdo->prepare($queryRevenue);
+        $stmtRevenue->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
+        $stmtRevenue->execute();
+        $revenue = $stmtRevenue->fetch(PDO::FETCH_ASSOC);
+        $totalRevenue = $revenue['total_revenue'] ?? 0;
+        // Fungsi untuk memformat angka menjadi Rupiah
+        function formatRupiah($angka)
+        {
+            return "Rp " . number_format($angka, 0, ',', '.');
+        }
+        // Format pendapatan ke dalam Rupiah
+        $formattedRevenue = formatRupiah($totalRevenue);
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+    
+
+    // Pesanan Terbaru
     try {
         // Query untuk online orders
         $queryOnline = "
@@ -61,7 +150,6 @@
             ORDER BY o.order_date DESC
             LIMIT 5
         ";
-
         // Query untuk offline orders
         $queryOffline = "
             SELECT 
@@ -75,28 +163,22 @@
             ORDER BY order_date DESC
             LIMIT 5
         ";
-    
         // Eksekusi query online orders
         $stmtOnline = $pdo->prepare($queryOnline);
         $stmtOnline->execute();
         $onlineOrders = $stmtOnline->fetchAll(PDO::FETCH_ASSOC);
-    
         // Eksekusi query offline orders
         $stmtOffline = $pdo->prepare($queryOffline);
         $stmtOffline->execute();
         $offlineOrders = $stmtOffline->fetchAll(PDO::FETCH_ASSOC);
-    
         // Gabungkan data online dan offline orders
         $orders = array_merge($onlineOrders, $offlineOrders);
-    
         // Urutkan data berdasarkan tanggal (order_date)
         usort($orders, function ($a, $b) {
             return strtotime($b['order_date']) - strtotime($a['order_date']);
         });
-    
         // Ambil 5 pesanan terbaru setelah digabung
         $latestOrders = array_slice($orders, 0, 5);
-    
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -125,7 +207,9 @@
         <link rel="stylesheet" href="assets/css/sidebar.css">
         <script type="text/javascript" src="assets/js/sidebar.js" defer></script>
         <link rel="stylesheet" href="assets/css/best-seller-product.css">
-
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/yearSelect/yearSelect.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/yearSelect/yearSelect.css">
+        <link rel="stylesheet" href="assets/css/popup.css">
     </head>
 
     <body style="background-color: rgba(0, 130, 127, 0.35); color: #000;">
@@ -190,12 +274,16 @@
 
         <main>
             <div class="container">
+                <!-- Memilih Tahun -->
+                <div class="year-picker-container col-lg-3 dashboard-card">
+                    <input id="year-picker" type="text" class="year-picker" placeholder="Pilih Tahun">
+                    <button id="submit-year" class="btn btn-primary">Submit</button>
+                </div>
                 <div class="row">
                     <!-- Grafik Penjualan -->
                     <div class="col-lg-9">
                         <div class="dashboard-card">
                             <h5>Grafik Penjualan</h5>
-                            <select id="year-filter"></select>
                             <select id="sales-filter">
                                 <option value="all">Semua Penjualan</option>
                                 <option value="online">Penjualan Online</option>
@@ -206,16 +294,82 @@
                         
                         <!-- Pesanan dan Pendapatan -->
                         <div class="row mt-4">
+                            <!-- <div class="col-lg-6">
+                                <div class="dashboard-card hover-effect" style="position: relative; padding: 20px; background: linear-gradient(to right, #4CAF50, #81C784); border-radius: 10px; color: white;">
+                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
+                                    </h4>
+                                    <h2 style="font-size: 4rem; text-align: center; margin: 20px 0;">
+                                        <strong><?= htmlspecialchars($totalSales) ?></strong>
+                                    </h2>
+                                    <p style="text-align: center;">
+                                        <a href="../admin/orders.php" style="text-decoration: none; color: #fff; font-weight: bold; background-color: #388E3C; padding: 10px 20px; border-radius: 5px;">
+                                            Lihat Semua Pesanan
+                                        </a>
+                                    </p>
+                                </div>
+                            </div> -->
+                            <!-- <div class="col-lg-6">
+                                <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" style="background: white; border-radius: 10px; padding: 20px; color: black; transition: all 0.3s ease; height: 228px;" 
+                                    onmouseover="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';"
+                                    onmouseout="this.style.background='white'; this.style.color='black';">
+                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
+                                    </h4>
+                                    <h2 style="font-size: 4rem; text-align: center; margin: 20px 0;">
+                                        <strong><?= htmlspecialchars($totalSales) ?></strong>
+                                    </h2>
+                                    <p style="text-align: center;">
+                                        <a href="../admin/orders.php" style="text-decoration: none; color: white; font-weight: bold; background-color: #00827f; padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;" 
+                                            onmouseover="this.style.background='white'; this.style.color='#00827f';"
+                                            onmouseout="this.style.background='#00827f'; this.style.color='white';">
+                                            Lihat Semua Penjualan
+                                        </a>
+                                    </p>
+                                </div>
+                            </div> -->
                             <div class="col-lg-6">
-                                <div class="dashboard-card hover-effect">
-                                    <h5>Penjualan</h5>
-                                    <p><a href="../admin/orders.php">Lihat Semua Pesanan</a></p>
+                                <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" 
+                                    style="background: linear-gradient(to bottom, #00827f, #80E3E1); border-radius: 10px; padding: 20px; color: white; transition: all 0.3s ease; height: 228px;" 
+                                    onmouseover="this.style.background='white'; this.style.color='black';"
+                                    onmouseout="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';">
+                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
+                                    </h4>
+                                    <h2 style="font-size: 4rem; text-align: center; margin: 20px 0;">
+                                        <strong><?= htmlspecialchars($totalSales) ?></strong>
+                                    </h2>
+                                    <p style="text-align: center;">
+                                        <a href="../admin/orders.php" style="text-decoration: none; color: white; font-weight: bold; background-color: #00827f; padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;" 
+                                        onmouseover="this.style.background='#00827f'; this.style.color='white';"
+                                        onmouseout="this.style.background='white'; this.style.color='#00827f';">
+                                            Lihat Semua Pesanan
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
+
                             <div class="col-lg-6">
-                                <div class="dashboard-card hover-effect">
-                                    <h5>Pendapatan</h5>
-                                    <p><a href="../admin/orders.php">Lihat Semua Pendapatan</a></p>
+                                <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" 
+                                    style="background: white; border-radius: 10px; padding: 20px; color: black; transition: all 0.3s ease; height: 228px;" 
+                                    onmouseover="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';"
+                                    onmouseout="this.style.background='white'; this.style.color='black';">
+                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Pendapatan
+                                    </h4>
+                                    <p style="text-align: center; margin-top: 30px;">
+                                        <h2 style="font-size: 2.7rem; text-align: center; margin: 20px 0;">
+                                            <strong><?= $formattedRevenue ?></strong>
+                                        </h2>
+                                    </p>
+                                    <p style="text-align: center; margin-top: 33px;">
+                                        <a href="../admin/orders.php" 
+                                        style="text-decoration: none; color: white; font-weight: bold; background-color: #00827f; padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;" 
+                                        onmouseover="this.style.background='white'; this.style.color='#00827f';"
+                                        onmouseout="this.style.background='#00827f'; this.style.color='white';">
+                                            Lihat Laporan Pendapatan
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +437,20 @@
                     </div>
                 </div>
             </div>
+            <div class="popup-overlay" id="popupOverlay" style="display: none;">
+                <div class="popup-content">
+                    <p id="popupMessage"></p>
+                    <button onclick="closePopup()">Close</button>
+                </div>
+            </div>
         </main>
         <script src="assets/js/graphics.js"></script>
+        <script src="assets/js/year-picker.js"></script>
+        <script>
+            function closePopup() {
+            const popupOverlay = document.getElementById('popupOverlay');
+            popupOverlay.style.display = 'none';
+        }
+        </script>
     </body>
 </html>

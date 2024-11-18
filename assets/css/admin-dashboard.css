@@ -87,7 +87,7 @@
 }
 
 .order-list li {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.5;
     color: black;
 }
@@ -131,11 +131,6 @@
     justify-content: space-between;
     padding-top: 5px;
     margin-bottom: 10px;
-}
-
-.chart-filter h4 {
-    margin: 0;
-    padding-top: 5px;
 }
 
 .chart-filter select {
@@ -191,3 +186,50 @@
     color: #cdcdcd;
 }
 
+/* .year-picker-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+} */
+
+/* .year-picker {
+    width: 120px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+} */
+
+#year-picker {
+    width: 150px;
+    height: 40px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.year-picker-container {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 10px;
+    gap: 10px;
+}
+
+#submit-year {
+    height: 40px;
+    background-color: rgba(0, 130, 127, 10);
+    color: white;
+    border: none;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 5px;
+}
+
+#submit-year:hover {
+    background-color: #004644;
+}

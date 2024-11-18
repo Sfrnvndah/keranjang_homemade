@@ -12,7 +12,7 @@
     width: 100%;
     max-width: 400px;
     padding: 40px;
-    background: #9C6674;
+    background: #00827f;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     border-radius: 8px;
@@ -29,14 +29,14 @@
     width: 100%;
     padding: 12px 15px;
     margin: 8px 0;
-    border: 1px solid #9C6674;
+    border: 1px solid #00827f;
     border-radius: 4px;
 }
 
 .login-form button {
     width: 100%;
     padding: 12px;
-    background-color: #794553;
+    background-color: #005F5C;
     color: #FFF;
     font-size: 16px;
     border: none;
@@ -46,7 +46,7 @@
 }
 
 .login-form button:hover {
-    background-color: #794553;
+    background-color: #005F5C;
 }
 
 .login-form a {
@@ -80,4 +80,43 @@
     color: #FFF;
     font-weight: 500;
     text-decoration: underline;
+}
+
+/* Tombol Login dan Logout */
+.btn-login, .btn-logout {
+    font-size: 0.9em;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    margin: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    margin-left: 15px;
+}
+
+.btn-login {
+    background-color: #00827f;
+    color: white;
+}
+
+.btn-login:hover {
+    background-color: #005F5C;
+    color: aliceblue;
+    transform: scale(1.05);
+}
+
+.btn-logout {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
 }

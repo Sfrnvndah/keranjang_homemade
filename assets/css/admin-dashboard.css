@@ -133,6 +133,11 @@
     margin-bottom: 10px;
 }
 
+.chart-filter h4 {
+    margin: 0;
+    padding-top: 5px;
+}
+
 .chart-filter select {
     margin-left: auto;
     padding: 5px;

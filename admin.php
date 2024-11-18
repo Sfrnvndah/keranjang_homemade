@@ -132,7 +132,6 @@
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
-    
 
     // Pesanan Terbaru
     try {

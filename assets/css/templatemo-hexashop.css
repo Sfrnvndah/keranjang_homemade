@@ -157,7 +157,7 @@ body {
 
 .main-border-button a:hover {
   background-color: #fff;
-  color: #00827f;
+  color: black;
 }
 
 .main-white-button a {
@@ -189,7 +189,7 @@ body {
 .section-heading h2 {
   font-size: 34px;
   font-weight: 700;
-  color: #00827f;
+  color: black;
 }
 
 .section-heading span {
@@ -666,6 +666,7 @@ banner
   left: 100px;
   top: 50%;
   transform: translateY(-50%);
+  text-shadow: 2px 2px 5px rgba(56, 56, 56, 0.5);
 }
 
 .main-banner .left-content .inner-content h4 {
@@ -705,6 +706,7 @@ banner
   transform: translateY(-50%);
   width: 100%;
   text-align: center;
+  text-shadow: 2px 2px 5px rgba(56, 56, 56, 0.5);
 }
 
 .main-banner .right-content .right-first-image .thumb .inner-content h4 {
@@ -1888,7 +1890,7 @@ Single Product Page
   float: left;
   font-size: 20px;
   margin-top: 10px;
-  color: #aaa!important;
+  color: rgb(56, 56, 56)!important;
 }
 
 .total .main-border-button {

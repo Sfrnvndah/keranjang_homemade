@@ -5,16 +5,21 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
-        $stmt->execute([':username' => $username]);
-        $user = $stmt->fetch();
-        if ($user && $password == $user['password']) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: ../index.php");
-            exit;
-        } else {
-            $message = "Username atau password salah!";
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+            $stmt->execute([':username' => $username]);
+            $user = $stmt->fetch();
+            if ($user && $password == $user['password']) {
+                // Set session
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['username'] = $user['username'];
+                header("Location: ../index.php");
+                exit;
+            } else {
+                $message = "Username atau password salah!";
+            }
+        } catch (PDOException $e) {
+            $message = "Terjadi kesalahan: " . $e->getMessage();
         }
     }
 ?>
@@ -31,6 +36,7 @@
         <link rel="stylesheet" href="../assets/css/login.css">
         <link rel="stylesheet" href="../assets/css/popup.css">
     </head>
+
     <body>
         <div class="login-container">
             <div class="login-form">
@@ -39,7 +45,7 @@
                     <input type="text" name="username" placeholder="Username" required>
                     <input type="password" name="password" placeholder="Password" required>
                     <button type="submit">Login</button>
-                    <p style="color: #9C6674;">.</p>
+                    <p style="color: #00827f;">.</p>
                     <p><a href="forgot_password.php">Forgot Password?</a></p>
                 </form>
                 <div class="register-link">
@@ -47,6 +53,7 @@
                 </div>
             </div>
         </div>
+
         <div class="popup-overlay" id="popupOverlay">
             <div class="popup-content">
                 <p id="popupMessage"></p>

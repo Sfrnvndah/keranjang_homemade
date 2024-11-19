@@ -1,8 +1,13 @@
 <?php
-    $notebookPath = 'graphics/python.ipynb';
+    // Grafik Penjualan
+    $notebookPath = 'graphics/sales_data.ipynb';
     $command = 'jupyter nbconvert --to notebook --execute ' . escapeshellarg($notebookPath);
     $output = shell_exec($command);
-    echo $output;
+    // Grafik Produk Terlaris
+    $notebookPathBarChart = 'graphics/top_products.ipynb';
+    $commandBarChart = 'jupyter nbconvert --to notebook --execute ' . escapeshellarg($notebookPathBarChart);
+    $outputBarChart = shell_exec($commandBarChart);
+    echo $outputBarChart;
     require 'database/connection.php';
     // Produk Terlaris Per-Tahun
     try {
@@ -147,7 +152,7 @@
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.user_id
             ORDER BY o.order_date DESC
-            LIMIT 5
+            LIMIT 15
         ";
         // Query untuk offline orders
         $queryOffline = "
@@ -160,7 +165,7 @@
                 'Offline' AS source
             FROM offline_orders
             ORDER BY order_date DESC
-            LIMIT 5
+            LIMIT 15
         ";
         // Eksekusi query online orders
         $stmtOnline = $pdo->prepare($queryOnline);
@@ -177,7 +182,7 @@
             return strtotime($b['order_date']) - strtotime($a['order_date']);
         });
         // Ambil 5 pesanan terbaru setelah digabung
-        $latestOrders = array_slice($orders, 0, 5);
+        $latestOrders = array_slice($orders, 0, 15);
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -211,7 +216,7 @@
         <link rel="stylesheet" href="assets/css/popup.css">
     </head>
 
-    <body style="background-color: rgba(0, 130, 127, 0.35); color: #000;">
+    <body style="background-color: #fafafa; color: #000;">
         <nav id="sidebar" style="background-color: #00827f;">
             <ul>
                 <li>
@@ -222,52 +227,81 @@
                 </li>
                 <li class="active">
                     <a href="admin.php">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M520-640v-160q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v160q0 17-11.5 28.5T800-600H560q-17 0-28.5-11.5T520-640ZM120-480v-320q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v320q0 17-11.5 28.5T400-440H160q-17 0-28.5-11.5T120-480Zm400 320v-320q0-17 11.5-28.5T560-520h240q17 0 28.5 11.5T840-480v320q0 17-11.5 28.5T800-120H560q-17 0-28.5-11.5T520-160Zm-400 0v-160q0-17 11.5-28.5T160-360h240q17 0 28.5 11.5T440-320v160q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-360h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
-                    <span>Dashboard</span>
+                        <img src="assets/images/icon-dashboard.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin/daftar_produk.php">
+                        <img src="assets/images/icon-product.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Produk</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin/daftar_pesanan.php">
+                        <img src="assets/images/icon-order.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Pesanan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin/daftar_pembayaran.php">
+                        <img src="assets/images/icon-payment.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Daftar Pembayaran</span>
                     </a>
                 </li>
                 <li>
                     <button onclick=toggleSubMenu(this) class="dropdown-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h207q16 0 30.5 6t25.5 17l57 57h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Zm400-160v40q0 17 11.5 28.5T600-320q17 0 28.5-11.5T640-360v-40h40q17 0 28.5-11.5T720-440q0-17-11.5-28.5T680-480h-40v-40q0-17-11.5-28.5T600-560q-17 0-28.5 11.5T560-520v40h-40q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400h40Z"/></svg>
-                    <span>Create</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>
+                        <img src="assets/images/icon-report.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Laporan</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>
                     </button>
                     <ul class="sub-menu">
                     <div>
-                        <li><a href="#">Folder</a></li>
-                        <li><a href="#">Document</a></li>
-                        <li><a href="#">Project</a></li>
+                        <li><a href="report_sales.php">Penjualan</a></li>
+                        <li><a href="report_finance.php">Keunagan</a></li>
+                        <li><a href="report_payment.php">Pembayaran</a></li>
                     </div>
                     </ul>
                 </li>
                 <li>
                     <button onclick=toggleSubMenu(this) class="dropdown-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m221-313 142-142q12-12 28-11.5t28 12.5q11 12 11 28t-11 28L250-228q-12 12-28 12t-28-12l-86-86q-11-11-11-28t11-28q11-11 28-11t28 11l57 57Zm0-320 142-142q12-12 28-11.5t28 12.5q11 12 11 28t-11 28L250-548q-12 12-28 12t-28-12l-86-86q-11-11-11-28t11-28q11-11 28-11t28 11l57 57Zm339 353q-17 0-28.5-11.5T520-320q0-17 11.5-28.5T560-360h280q17 0 28.5 11.5T880-320q0 17-11.5 28.5T840-280H560Zm0-320q-17 0-28.5-11.5T520-640q0-17 11.5-28.5T560-680h280q17 0 28.5 11.5T880-640q0 17-11.5 28.5T840-600H560Z"/></svg>
-                    <span>Todo-Lists</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>
+                        <img src="assets/images/icon-sales.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Penjualan</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>
                     </button>
                     <ul class="sub-menu">
                     <div>
-                        <li><a href="#">Work</a></li>
-                        <li><a href="#">Private</a></li>
-                        <li><a href="#">Coding</a></li>
-                        <li><a href="#">Gardening</a></li>
-                        <li><a href="#">School</a></li>
+                        <li><a href="sales_recording.php">Penjualan Offline</a></li>
+                        <li><a href="sales_history.php">Riwayat Penjualan</a></li>
                     </div>
                     </ul>
                 </li>
                 <li>
-                    <a href="calendar.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
-                    <span>Calendar</span>
-                    </a>
+                    <button onclick=toggleSubMenu(this) class="dropdown-btn">
+                        <img src="assets/images/icon-training.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Pelatihan</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>
+                    </button>
+                    <ul class="sub-menu">
+                    <div>
+                        <li><a href="training_list.php">Daftar Pelatihan</a></li>
+                        <li><a href="participants_list.php">Daftar Peserta</a></li>
+                        <!-- <li><a href="offline_training.php">Daftar Pelatihan Offline</a></li> -->
+                        <li><a href="training_history.php">Riwayat Pendaftar</a></li>
+                    </div>
+                    </ul>
                 </li>
                 <li>
-                    <a href="profile.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240Zm80 0h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
-                    <span>Profile</span>
+                    <a href="admin/profile.php">
+                        <img src="assets/images/icon-profile.png" alt="Dashboard" width="24px" height="24px">
+                        <span>Profile</span>
                     </a>
                 </li>
+                <!-- <div class="logout-container">
+                    <button class="logout-btn" onclick="window.location.href='logout.php'">
+                        <span>Logout</span>
+                    </button>
+                </div> -->
             </ul>
         </nav>       
 
@@ -291,47 +325,20 @@
                             <canvas id="salesChart"></canvas>
                         </div>
                         
+                        <!-- Grafik produk terlaris -->
+                        <div class="dashboard-card">
+                            <h5>Produk Terlaris</h5>
+                            <canvas id="topProductsChart"></canvas>
+                        </div>
+
+
                         <!-- Pesanan dan Pendapatan -->
                         <div class="row mt-4">
-                            <!-- <div class="col-lg-6">
-                                <div class="dashboard-card hover-effect" style="position: relative; padding: 20px; background: linear-gradient(to right, #4CAF50, #81C784); border-radius: 10px; color: white;">
-                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
-                                    </h4>
-                                    <h2 style="font-size: 4rem; text-align: center; margin: 20px 0;">
-                                        <strong><?= htmlspecialchars($totalSales) ?></strong>
-                                    </h2>
-                                    <p style="text-align: center;">
-                                        <a href="../admin/orders.php" style="text-decoration: none; color: #fff; font-weight: bold; background-color: #388E3C; padding: 10px 20px; border-radius: 5px;">
-                                            Lihat Semua Pesanan
-                                        </a>
-                                    </p>
-                                </div>
-                            </div> -->
-                            <!-- <div class="col-lg-6">
-                                <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" style="background: white; border-radius: 10px; padding: 20px; color: black; transition: all 0.3s ease; height: 228px;" 
-                                    onmouseover="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';"
-                                    onmouseout="this.style.background='white'; this.style.color='black';">
-                                    <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
-                                    </h4>
-                                    <h2 style="font-size: 4rem; text-align: center; margin: 20px 0;">
-                                        <strong><?= htmlspecialchars($totalSales) ?></strong>
-                                    </h2>
-                                    <p style="text-align: center;">
-                                        <a href="../admin/orders.php" style="text-decoration: none; color: white; font-weight: bold; background-color: #00827f; padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;" 
-                                            onmouseover="this.style.background='white'; this.style.color='#00827f';"
-                                            onmouseout="this.style.background='#00827f'; this.style.color='white';">
-                                            Lihat Semua Penjualan
-                                        </a>
-                                    </p>
-                                </div>
-                            </div> -->
                             <div class="col-lg-6">
                                 <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" 
-                                    style="background: linear-gradient(to bottom, #00827f, #80E3E1); border-radius: 10px; padding: 20px; color: white; transition: all 0.3s ease; height: 228px;" 
+                                    style="background: linear-gradient(to bottom, #00827f, #4DADAB); border-radius: 10px; padding: 20px; color: white; transition: all 0.3s ease; height: 220px;" 
                                     onmouseover="this.style.background='white'; this.style.color='black';"
-                                    onmouseout="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';">
+                                    onmouseout="this.style.background='linear-gradient(to bottom, #00827f, #4DADAB)'; this.style.color='white';">
                                     <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Penjualan
                                     </h4>
@@ -350,9 +357,9 @@
 
                             <div class="col-lg-6">
                                 <div class="dashboard-card hover-effect animate__animated animate__fadeInUp" 
-                                    style="background: white; border-radius: 10px; padding: 20px; color: black; transition: all 0.3s ease; height: 228px;" 
-                                    onmouseover="this.style.background='linear-gradient(to bottom, #00827f, #80E3E1)'; this.style.color='white';"
-                                    onmouseout="this.style.background='white'; this.style.color='black';">
+                                style="background: linear-gradient(to bottom, #00827f, #4DADAB); border-radius: 10px; padding: 20px; color: white; transition: all 0.3s ease; height: 220px;" 
+                                    onmouseover="this.style.background='white'; this.style.color='black';"
+                                    onmouseout="this.style.background='linear-gradient(to bottom, #00827f, #4DADAB)'; this.style.color='white';">
                                     <h4 style="text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-chart-line" style="margin-right: 10px;"></i> Pendapatan
                                     </h4>
@@ -362,11 +369,11 @@
                                         </h2>
                                     </p>
                                     <p style="text-align: center; margin-top: 33px;">
-                                        <a href="../admin/orders.php" 
+                                        <a href="../admin/report_finance.php" 
                                         style="text-decoration: none; color: white; font-weight: bold; background-color: #00827f; padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;" 
-                                        onmouseover="this.style.background='white'; this.style.color='#00827f';"
-                                        onmouseout="this.style.background='#00827f'; this.style.color='white';">
-                                            Lihat Laporan Pendapatan
+                                        onmouseover="this.style.background='#00827f'; this.style.color='white';"
+                                        onmouseout="this.style.background='white'; this.style.color='#00827f';">
+                                            Lihat Laporan Keuangan
                                         </a>
                                     </p>
                                 </div>
@@ -374,43 +381,8 @@
                         </div>
                     </div>
 
-                    <!-- Produk Terlaris dan Pesanan Baru -->
+                    <!-- Pesanan Baru -->
                     <div class="col-lg-3">
-                        <div class="dashboard-card">
-                            <h5 class="bold-title">Produk Terlaris</h5>
-                            <p>
-                                <div class="product-legend-vertical">
-                                    <?php
-                                    foreach ($products as $index => $product) {
-                                        $color = $productCircles['colors'][$index];
-                                        $name = htmlspecialchars($product['product_name']);
-                                        echo "
-                                            <div class='legend-item'>
-                                                <span class='legend-color' style='background-color: $color;'></span>
-                                                <span class='legend-label' style='font-size: 14px; color: black;'>$name</span>
-                                            </div>
-                                        ";
-                                    }
-                                    ?>
-                                </div>
-                            </p>
-                            <div class="product-sale">
-                                <?php
-                                foreach ($products as $index => $product) {
-                                    $size = $productCircles['sizes'][$index];
-                                    $color = $productCircles['colors'][$index];
-                                    $quantity = $product['total_quantity'];
-                                    echo "
-                                    <div class='circle' style='background-color: $color; width: {$size}px; height: {$size}px; margin-left: -20px; z-index: " . (3 - $index) . ";'>
-                                        <span>$quantity</span>
-                                    </div>
-                                    ";
-                                }
-                                ?>
-                            </div>
-                        </div>
-
-                        <!-- Pesanan Baru -->
                         <div class="dashboard-card">
                             <div class="card-header" style="background-color: rgba(0, 130, 127, 10);">
                                 <h5 style="font-weight: bold; color: white;">Pesanan Terbaru</h5>
@@ -443,7 +415,8 @@
                 </div>
             </div>
         </main>
-        <script src="assets/js/graphics.js"></script>
+        <script src="assets/js/line-chart.js"></script>
+        <script src="assets/js/bar-chart.js"></script>
         <script src="assets/js/year-picker.js"></script>
         <script>
             function closePopup() {

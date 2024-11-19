@@ -12,7 +12,7 @@
 .dashboard-card {
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     padding: 15px;
     margin-bottom: 15px;
 }
@@ -237,4 +237,48 @@
 
 #submit-year:hover {
     background-color: #004644;
+}
+
+#sidebar {
+    position: absolute;
+    height: 100vh;
+}
+
+/* Wrapper logout di paling bawah sidebar */
+.logout-container {
+    position: absolute;
+    bottom: 20px;  /* Mengatur jarak dari bawah */
+    left: 50%; /* Menempatkan di tengah */
+    transform: translateX(-50%); /* Menjaga elemen tetap terpusat */
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Memastikan tombol logout berada di tengah secara horizontal */
+}
+
+.logout-btn {
+    background-color: #005F5C;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.logout-btn:hover {
+    background-color: #004644;
+    transform: scale(1.05);
+}
+
+.logout-container.adjust-left {
+    left: 45%;
+    transform: translateX(0);
+}
+
+.logout-container.adjust-right {
+    left: 55%;
+    transform: translateX(-100%);
 }

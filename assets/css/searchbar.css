@@ -7,13 +7,13 @@
 }
 
 .search-form .btn-primary {
-    background-color: #794553;
-    border-color: #794553;
+    background-color: #00827f;
+    border-color: #00827f;
 }
 
 .search-form .btn-primary:hover {
-    background-color: #794553;
-    border-color: #794553;
+    background-color: #005F5C;
+    border-color: #005F5C;
 }
 
 .filter-form {
@@ -40,8 +40,8 @@
 }
 
 .filter-form button {
-    background-color: #794553;
-    border-color: #794553;
+    background-color: #00827f;
+    border-color: #00827f;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
@@ -52,8 +52,8 @@
 }
 
 .filter-form button:hover {
-    background-color: #794553;
-    border-color: #794553;
+    background-color: #005F5C;
+    border-color: #005F5C;
 }
 
 @media (max-width: 768px) {

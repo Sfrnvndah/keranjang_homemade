@@ -1,5 +1,7 @@
 <?php
+    session_start();
     include '../database/connection.php';
+    $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
     $selectedCategories = isset($_GET['category']) ? $_GET['category'] : [];
     $query = "SELECT * FROM products";
@@ -59,6 +61,7 @@
         <link rel="stylesheet" href="../assets/css/owl-carousel.css">
         <link rel="stylesheet" href="../assets/css/lightbox.css">
         <link rel="stylesheet" href="../assets/css/searchbar.css">
+        <link rel="stylesheet" href="../assets/css/login.css">
     </head>
     
     <body>
@@ -67,33 +70,51 @@
                 <div class="row">
                     <div class="col-12">
                         <nav class="main-nav">
-                            <a href="../index.php" class="logo">
-                                <img src="../assets/images/logo.png">
+                            <a href="index.php" class="logo">
+                                <img src="../assets/images/pak-tara-craft-logo-black-no-background.png">
                             </a>
                             <ul class="nav">
-                                <li class="scroll-to-section"><a href="../index.php">Home</a></li>
+                                <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
                                 <li class="submenu">
                                     <a href="javascript:;">Product</a>
                                     <ul>
-                                        <li><a href="product_lists.php">Product Lists</a></li>
-                                        <li><a href="check_out.php">Check Out</a></li>
+                                        <li><a href="pages/product_lists.php">Product Lists</a></li>
+                                        <li><a href="pages/check_out.php">Check Out</a></li>
                                     </ul>
                                 </li>
                                 <li class="submenu">
                                     <a href="javascript:;">Pages</a>
                                     <ul>
-                                        <li><a href="../content/about_us.php">About Us</a></li>
-                                        <li><a href="../content/contact_us.php">Contact Us</a></li>
-                                        <li><a href="../content/training.php">Training</a></li>
+                                        <li><a href="content/about_us.php">About Us</a></li>
+                                        <li><a href="content/contact_us.php">Contact Us</a></li>
+                                        <li><a href="content/training.php">Training</a></li>
                                     </ul>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="../pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em;" aria-hidden="true"></i></a>
+                                    <a href="pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="../account/account.php"><i class="fa fa-user" style="font-size: 1.5em;" aria-hidden="true"></i></a>
+                                    <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
                                 </li>
+                                <!-- Tombol Login atau Logout -->
+                                <?php if ($userId): ?>
+                                    <form action="../form/logout.php" method="post" style="display: inline;">
+                                        <button type="submit" class="btn-logout">Logout</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="../form/login.php" class="btn-login">Login</a>
+                                <?php endif; ?>
                             </ul>
+                            <!-- Session ID user -->
+                            <?php if ($userId): ?>
+                                <span style="color: white; font-size: 10px;">
+                                    <?= htmlspecialchars($userId); ?>
+                                </span>
+                            <?php else: ?>
+                                <span style="color: white; font-size: 10px;">
+                                    User belum login
+                                </span>
+                            <?php endif; ?>
                         </nav>
                     </div>
                 </div>
@@ -147,8 +168,8 @@
                                 <div class="thumb">
                                     <div class="hover-content">
                                         <ul>
-                                            <li><a href="product_detail.php?product_id=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-eye" style="color: #794553"></i></a></li>
-                                            <li><a href="cart.php?add=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-shopping-cart" style="color: #794553"></i></a></li>
+                                            <li><a href="product_detail.php?product_id=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
+                                            <li><a href="cart.php?add=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
                                         </ul>
                                     </div>
                                     <img src="../assets/images/<?= htmlspecialchars($firstImage) ?>" alt="<?= htmlspecialchars($row['product_name']) ?>">
@@ -190,7 +211,7 @@
                     <div class="col-lg-3">
                         <div class="first-item">
                             <div class="logo">
-                                <img src="assets/images/white-logo.png" alt="hexashop ecommerce templatemo">
+                                <img src="../assets/images/pak-tara-craft-logo-white-no-background.png" alt="hexashop ecommerce templatemo">
                             </div>
                             <ul>
                                 <li><a href="https://www.google.co.id/maps/place/Gg.+Melon,+Pelindu,+Karangrejo,+Kec.+Sumbersari,+Kabupaten+Jember,+Jawa+Timur+68124/@-8.1905765,113.7204516,14z/data=!4m6!3m5!1s0x2dd696708d1bdf53:0x186a95d951b7d20b!8m2!3d-8.1877199!4d113.7282515!16s%2Fg%2F1q62d1ll9?entry=ttu&g_ep=EgoyMDI0MTEwNi4wIKXMDSoASAFQAw%3D%3D">Gg. Melon, Pelindu, Karangrejo, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124, Indonesia</a></li>
@@ -264,14 +285,13 @@
             $(function() {
                 var selectedClass = "";
                 $("p").click(function(){
-                selectedClass = $(this).attr("data-rel");
-                $("#portfolio").fadeTo(50, 0.1);
-                    $("#portfolio div").not("."+selectedClass).fadeOut();
-                setTimeout(function() {
-                $("."+selectedClass).fadeIn();
-                $("#portfolio").fadeTo(50, 1);
-                }, 500);
-                    
+                    selectedClass = $(this).attr("data-rel");
+                    $("#portfolio").fadeTo(50, 0.1);
+                        $("#portfolio div").not("."+selectedClass).fadeOut();
+                    setTimeout(function() {
+                        $("."+selectedClass).fadeIn();
+                        $("#portfolio").fadeTo(50, 1);
+                    }, 500);
                 });
             });
         </script>

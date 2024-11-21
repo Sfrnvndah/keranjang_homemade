@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
+            color: black;
         }
         header {
             background-color: #00796b;
@@ -37,6 +38,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            table-layout: auto;
         }
         table th, table td {
             border: 1px solid #ddd;
@@ -158,6 +160,9 @@
                 
                 <label for="kontakPeserta">Kontak:</label>
                 <input type="text" id="kontakPeserta" placeholder="Masukkan nomor kontak" required>
+
+                <label for="kontakPeserta">Tanggal Pelatihan:</label>
+                <input type="text" id="kontakPeserta" placeholder="Masukkan Tanggal Pelatihan" required>
                 
                 <label for="statusPembayaran">Status Pembayaran:</label>
                 <select id="statusPembayaran" required>
@@ -177,7 +182,7 @@
                     <tr>
                         <th>Nama</th>
                         <th>Kontak</th>
-                        <th>Lokasi Pelatihan</th>
+                        <th>Tanggal Pelatihan</th>
                         <th>Status Pembayaran</th>
                     </tr>
                 </thead>
@@ -195,10 +200,11 @@
             // Ambil nilai dari input form
             const nama = document.getElementById('namaPeserta').value.trim();
             const kontak = document.getElementById('kontakPeserta').value.trim();
+            const tanggal = document.getElementById('tanggalpelatihan').value;
             const status = document.getElementById('statusPembayaran').value;
 
             // Validasi form
-            if (!nama || !kontak || !status) {
+            if (!nama || !kontak || tanggal || !status) {
                 alert("Harap isi semua kolom!");
                 return;
             }
@@ -211,13 +217,14 @@
             newRow.innerHTML = `
                 <td>${nama}</td>
                 <td>${kontak}</td>
-                <td>Lokasi Pelatihan Belum Ditentukan</td>
+                <td>${tanggal}</td>
                 <td>${status}</td>
             `;
             tabelPeserta.appendChild(newRow);
             // Kosongkan input setelah menambahkan data
             document.getElementById('namaPeserta').value = '';
             document.getElementById('kontakPeserta').value = '';
+            document.getElementById('tanggal').value = '';
             document.getElementById('statusPembayaran').value = '';
         }
     </script>

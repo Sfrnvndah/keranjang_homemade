@@ -4,82 +4,85 @@
     $filter = isset($_POST['filter']) ? $_POST['filter'] : 'all'; // Default: semua pesanan
 $cari_pesanan = isset($_POST['cari_pesanan']) ? $_POST['cari_pesanan'] : ''; // Default: tidak ada pencarian
 
-    $sqlPesanan = "
-        (
-            SELECT 
-                o.order_id AS id,
-                u.username AS nama_pelanggan,
-                p.product_name AS produk,
-                oi.quantity AS jumlah,
-                o.status AS status,
-                o.total_amount AS jumlah_dibayar,
-                'Online' AS metode_pembayaran,
-                o.order_date AS tanggal
-            FROM orders o
-            JOIN users u ON o.user_id = u.user_id
-            JOIN order_items oi ON o.order_id = oi.order_id
-            JOIN products p ON oi.product_id = p.product_id
-            WHERE 
-                (o.user_id LIKE :cari OR o.order_id LIKE :cari)
-        )
-        UNION ALL
-        (
-            SELECT 
-                oo.offline_order_id AS id,
-                oo.customer_name AS nama_pelanggan,
-                p.product_name AS produk,
-                ooi.quantity AS jumlah,
-                oo.status AS status,
-                oo.total_amount AS jumlah_dibayar,
-                oo.payment_method AS metode_pembayaran,
-                oo.order_date AS tanggal
-            FROM offline_orders oo
-            JOIN offline_order_items ooi ON oo.offline_order_id = ooi.offline_order_id
-            JOIN products p ON ooi.product_id = p.product_id
-            WHERE 
-                (oo.customer_name LIKE :cari OR oo.offline_order_id LIKE :cari)
-        )
-    ";
+$sqlPesanan = "
+(
+    SELECT 
+        o.order_id AS id,
+        u.username AS nama_pelanggan,
+        p.product_name AS produk,
+        oi.quantity AS jumlah,
+        o.status AS status,
+        o.total_amount AS jumlah_dibayar,
+        'Online' AS metode_pembayaran,
+        o.order_date AS tanggal
+    FROM orders o
+    JOIN users u ON o.user_id = u.user_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_id
+    WHERE 
+        (o.user_id LIKE :cari OR o.order_id LIKE :cari)
+        AND o.status IN ('completed', 'canceled')
+)
+UNION ALL
+(
+    SELECT 
+        oo.offline_order_id AS id,
+        oo.customer_name AS nama_pelanggan,
+        p.product_name AS produk,
+        ooi.quantity AS jumlah,
+        oo.status AS status,
+        oo.total_amount AS jumlah_dibayar,
+        oo.payment_method AS metode_pembayaran,
+        oo.order_date AS tanggal
+    FROM offline_orders oo
+    JOIN offline_order_items ooi ON oo.offline_order_id = ooi.offline_order_id
+    JOIN products p ON ooi.product_id = p.product_id
+    WHERE 
+        (oo.customer_name LIKE :cari OR oo.offline_order_id LIKE :cari)
+        AND oo.status IN ('completed', 'canceled')
+)
+";
 
-    // Tambahkan kondisi filter
-    if ($filter == 'online') {
-        $sqlPesanan = "(
-            SELECT 
-                o.order_id AS id,
-                u.username AS nama_pelanggan,
-                p.product_name AS produk,
-                oi.quantity AS jumlah,
-                o.status AS status,
-                o.total_amount AS jumlah_dibayar,
-                'Online' AS metode_pembayaran,
-                o.order_date AS tanggal
-            FROM orders o
-            JOIN users u ON o.user_id = u.user_id
-            JOIN order_items oi ON o.order_id = oi.order_id
-            JOIN products p ON oi.product_id = p.product_id
-            WHERE 
-                (o.user_id LIKE :cari OR o.order_id LIKE :cari)
-        )";
-    } elseif ($filter == 'offline') {
-        $sqlPesanan = "(
-            SELECT 
-                oo.offline_order_id AS id,
-                oo.customer_name AS nama_pelanggan,
-                p.product_name AS produk,
-                ooi.quantity AS jumlah,
-                oo.status AS status,
-                oo.total_amount AS jumlah_dibayar,
-                oo.payment_method AS metode_pembayaran,
-                oo.order_date AS tanggal
-            FROM offline_orders oo
-            JOIN offline_order_items ooi ON oo.offline_order_id = ooi.offline_order_id
-            JOIN products p ON ooi.product_id = p.product_id
-            WHERE 
-                (oo.customer_name LIKE :cari OR oo.offline_order_id LIKE :cari)
-        )";
-    }
+if ($filter == 'online') {
+$sqlPesanan = "(
+    SELECT 
+        o.order_id AS id,
+        u.username AS nama_pelanggan,
+        p.product_name AS produk,
+        oi.quantity AS jumlah,
+        o.status AS status,
+        o.total_amount AS jumlah_dibayar,
+        'Online' AS metode_pembayaran,
+        o.order_date AS tanggal
+    FROM orders o
+    JOIN users u ON o.user_id = u.user_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_id
+    WHERE 
+        (o.user_id LIKE :cari OR o.order_id LIKE :cari)
+        AND o.status IN ('completed', 'canceled')
+)";
+} elseif ($filter == 'offline') {
+$sqlPesanan = "(
+    SELECT 
+        oo.offline_order_id AS id,
+        oo.customer_name AS nama_pelanggan,
+        p.product_name AS produk,
+        ooi.quantity AS jumlah,
+        oo.status AS status,
+        oo.total_amount AS jumlah_dibayar,
+        oo.payment_method AS metode_pembayaran,
+        oo.order_date AS tanggal
+    FROM offline_orders oo
+    JOIN offline_order_items ooi ON oo.offline_order_id = ooi.offline_order_id
+    JOIN products p ON ooi.product_id = p.product_id
+    WHERE 
+        (oo.customer_name LIKE :cari OR oo.offline_order_id LIKE :cari)
+        AND oo.status IN ('completed', 'canceled')
+)";
+}
 
-    $sqlPesanan .= " ORDER BY tanggal DESC;";
+$sqlPesanan .= " ORDER BY tanggal DESC;";
 
     try {
         // Menjalankan query dengan prepared statement

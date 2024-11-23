@@ -677,6 +677,14 @@ banner
   margin-bottom: 20px;
 }
 
+.main-banner .left-content .inner-content h3 {
+  color: #fff;
+  margin-top: -10px;
+  font-size: 52px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
 .main-banner .left-content .inner-content span {
   font-size: 16px;
   color: #fff;

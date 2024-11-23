@@ -3,89 +3,113 @@
     include 'database/connection.php';
     $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $currentYear = date('Y');
-    $querykeranjangkecil = "SELECT product_name, image_url, price 
-                            FROM products 
-                            WHERE category_id = 1 AND stock > 0
-                            ORDER BY product_id DESC 
-                            LIMIT 6";
+    // Query keranjang kecil
+    $querykeranjangkecil = "SELECT product_id, product_name, image_url, price
+                        FROM products 
+                        WHERE category_id = 1 AND stock > 0
+                        ORDER BY product_id DESC 
+                        LIMIT 6";
     $stmtkecil = $pdo->prepare($querykeranjangkecil);
     $stmtkecil->execute();
-    $querykeranjangsedang = "SELECT product_name, image_url, price 
+    // Query keranjang sedang
+    $querykeranjangsedang = "SELECT product_id, product_name, image_url, price
                              FROM products 
                              WHERE category_id = 2 AND stock > 0
                              ORDER BY product_id DESC 
                              LIMIT 6";
     $stmtsedang = $pdo->prepare($querykeranjangsedang);
     $stmtsedang->execute();
-    $querykeranjangbesar = "SELECT product_name, image_url, price 
+    // QUery keranjang besar
+    $querykeranjangbesar = "SELECT product_id, product_name, image_url, price
                             FROM products 
                             WHERE category_id = 3 AND stock > 0
                             ORDER BY product_id DESC 
                             LIMIT 6";
     $stmtbesar = $pdo->prepare($querykeranjangbesar);
     $stmtbesar->execute();
-    $querykeranjangjumbo = "SELECT product_name, image_url, price 
+    // Query keranjang jumbo
+    $querykeranjangjumbo = "SELECT product_id, product_name, image_url, price
                             FROM products 
                             WHERE category_id = 4 AND stock > 0
                             ORDER BY product_id DESC 
                             LIMIT 6";
     $stmtjumbo = $pdo->prepare($querykeranjangjumbo);
     $stmtjumbo->execute();
+    // Format decimal ke rupiah
     function formatRupiah($angka) {
         return "Rp " . number_format($angka, 0, ',', '.');
     }
 
     // Menampilkan produk yang paling banyak terjual
-    $queryBestSeller = "
-        SELECT p.product_name, p.image_url, SUM(oi.quantity) + SUM(oi_offline.quantity) AS total_quantity
-        FROM products p
-        LEFT JOIN order_items oi ON p.product_id = oi.product_id
-        LEFT JOIN orders o ON oi.order_id = o.order_id AND YEAR(o.order_date) = :currentYear
-        LEFT JOIN offline_order_items oi_offline ON p.product_id = oi_offline.product_id
-        LEFT JOIN offline_orders o_offline ON oi_offline.offline_order_id = o_offline.offline_order_id AND YEAR(o_offline.order_date) = :currentYear
-        WHERE p.stock > 0
-        GROUP BY p.product_id
-        ORDER BY total_quantity DESC
-        LIMIT 1
-    ";
-    $stmtBestSeller = $pdo->prepare($queryBestSeller);
-    $stmtBestSeller->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
-    $stmtBestSeller->execute();
-    $bestSeller = $stmtBestSeller->fetch(PDO::FETCH_ASSOC);
-    if ($bestSeller) {
-        $productName = $bestSeller['product_name'];
-        $imageUrls = explode(',', $bestSeller['image_url']);
-        $imageUrl = "assets/images/" . $imageUrls[0];
-    } else {
-        $productName = "Produk Tidak Ditemukan";
-        $imageUrl = "assets/images/default.jpg";
-    }
+    // $queryBestSeller = "
+    //     SELECT p.product_name, p.image_url, SUM(oi.quantity) + SUM(oi_offline.quantity) AS total_quantity
+    //     FROM products p
+    //     LEFT JOIN order_items oi ON p.product_id = oi.product_id
+    //     LEFT JOIN orders o ON oi.order_id = o.order_id AND YEAR(o.order_date) = :currentYear
+    //     LEFT JOIN offline_order_items oi_offline ON p.product_id = oi_offline.product_id
+    //     LEFT JOIN offline_orders o_offline ON oi_offline.offline_order_id = o_offline.offline_order_id AND YEAR(o_offline.order_date) = :currentYear
+    //     WHERE p.stock > 0
+    //     GROUP BY p.product_id
+    //     ORDER BY total_quantity DESC
+    //     LIMIT 1
+    // ";
+    // $stmtBestSeller = $pdo->prepare($queryBestSeller);
+    // $stmtBestSeller->bindParam(':currentYear', $currentYear, PDO::PARAM_INT);
+    // $stmtBestSeller->execute();
+    // $bestSeller = $stmtBestSeller->fetch(PDO::FETCH_ASSOC);
+    // if ($bestSeller) {
+    //     $productName = $bestSeller['product_name'];
+    //     $imageUrls = explode(',', $bestSeller['image_url']);
+    //     $imageUrl = "assets/images/" . $imageUrls[0];
+    // } else {
+    //     $productName = "Produk Tidak Ditemukan";
+    //     $imageUrl = "assets/images/default.jpg";
+    // }
 
-    // Menampilkan keranjang kecil yang paling banyak terjual
-    $queryCategoryOneBestSeller = "
-        SELECT p.product_name, p.image_url, SUM(oi.quantity) + SUM(oi_offline.quantity) AS total_quantity
-        FROM products p
-        LEFT JOIN order_items oi ON p.product_id = oi.product_id
-        LEFT JOIN orders o ON oi.order_id = o.order_id AND YEAR(o.order_date) = :yearCategoryOne
-        LEFT JOIN offline_order_items oi_offline ON p.product_id = oi_offline.product_id
-        LEFT JOIN offline_orders o_offline ON oi_offline.offline_order_id = o_offline.offline_order_id AND YEAR(o_offline.order_date) = :yearCategoryOne
-        WHERE p.stock > 0 AND p.category_id = 1
-        GROUP BY p.product_id
-        ORDER BY total_quantity DESC
-        LIMIT 1
-    ";
-    $stmtCategoryOne = $pdo->prepare($queryCategoryOneBestSeller);
-    $stmtCategoryOne->bindParam(':yearCategoryOne', $currentYear, PDO::PARAM_INT);
-    $stmtCategoryOne->execute();
-    $categoryOneBestSeller = $stmtCategoryOne->fetch(PDO::FETCH_ASSOC);
-    if ($categoryOneBestSeller) {
-        $productNameCategoryOne = $categoryOneBestSeller['product_name'];
-        $imageUrlsOne = explode(',', $categoryOneBestSeller['image_url']);
-        $imageUrlCategoryOne = "assets/images/" . $imageUrlsOne[0];
-    } else {
-        $productNameCategoryOne = "Produk Tidak Ditemukan";
-        $imageUrlCategoryOne = "assets/images/default.jpg";
-    }
+    // Menampilkan produk secara acak
+    $queryUniqueFetch = "SELECT product_id, product_name, image_url 
+        FROM products 
+        WHERE stock > 0 
+        ORDER BY RAND() 
+        LIMIT 1";
+    $stmtUniqueFetch = $pdo->prepare($queryUniqueFetch);
+    $stmtUniqueFetch->execute();
+    $productDataUnique = $stmtUniqueFetch->fetch(PDO::FETCH_ASSOC);
+    // Jika produk ditemukan
+    if ($productDataUnique) {
+        // Ambil data produk
+        $productIdUnique = htmlspecialchars($productDataUnique['product_id']);
+        $productNameUnique = htmlspecialchars($productDataUnique['product_name']);
+        // Ambil gambar pertama jika ada lebih dari satu gambar
+        $imageListUnique = explode(',', $productDataUnique['image_url']);
+        $imageFileNameUnique = trim($imageListUnique[0]); // Gambar pertama
+        $imageUrlUnique = "assets/images/" . htmlspecialchars($imageFileNameUnique);
+
+        // Menampilkan keranjang kecil yang paling banyak terjual
+        $queryCategoryOneBestSeller = "
+            SELECT p.product_name, p.image_url, SUM(oi.quantity) + SUM(oi_offline.quantity) AS total_quantity
+            FROM products p
+            LEFT JOIN order_items oi ON p.product_id = oi.product_id
+            LEFT JOIN orders o ON oi.order_id = o.order_id AND YEAR(o.order_date) = :yearCategoryOne
+            LEFT JOIN offline_order_items oi_offline ON p.product_id = oi_offline.product_id
+            LEFT JOIN offline_orders o_offline ON oi_offline.offline_order_id = o_offline.offline_order_id AND YEAR(o_offline.order_date) = :yearCategoryOne
+            WHERE p.stock > 0 AND p.category_id = 1
+            GROUP BY p.product_id
+            ORDER BY total_quantity DESC
+            LIMIT 1
+        ";
+        $stmtCategoryOne = $pdo->prepare($queryCategoryOneBestSeller);
+        $stmtCategoryOne->bindParam(':yearCategoryOne', $currentYear, PDO::PARAM_INT);
+        $stmtCategoryOne->execute();
+        $categoryOneBestSeller = $stmtCategoryOne->fetch(PDO::FETCH_ASSOC);
+        if ($categoryOneBestSeller) {
+            $productNameCategoryOne = $categoryOneBestSeller['product_name'];
+            $imageUrlsOne = explode(',', $categoryOneBestSeller['image_url']);
+            $imageUrlCategoryOne = "assets/images/" . $imageUrlsOne[0];
+        } else {
+            $productNameCategoryOne = "Produk Tidak Ditemukan";
+            $imageUrlCategoryOne = "assets/images/default.jpg";
+        }
 
     // Menampilkan keranjang sedang yang paling banyak terjual
     $queryCategoryTwoBestSeller = "
@@ -164,6 +188,60 @@
         $productNameCategoryFour = "Produk Tidak Ditemukan";
         $imageUrlCategoryFour = "assets/images/default.jpg";
     }
+
+    // Memasukkan produk ke keranjang
+    if (isset($_GET['add_to_cart']) && $userId) {
+        $productId = (int)$_GET['add_to_cart'];
+        try {
+            // Cek apakah produk sudah ada di keranjang
+            $queryCheckCart = "SELECT quantity FROM cart WHERE user_id = :user_id AND product_id = :product_id";
+            $stmtCheckCart = $pdo->prepare($queryCheckCart);
+            $stmtCheckCart->execute([
+                ':user_id' => $userId,
+                ':product_id' => $productId
+            ]);
+            if ($stmtCheckCart->rowCount() > 0) {
+                // Jika sudah ada, update jumlah produk
+                $queryUpdateCart = "UPDATE cart SET quantity = quantity + 1 WHERE user_id = :user_id AND product_id = :product_id";
+                $stmtUpdateCart = $pdo->prepare($queryUpdateCart);
+                $stmtUpdateCart->execute([
+                    ':user_id' => $userId,
+                    ':product_id' => $productId
+                ]);
+            } else {
+                // Jika produk belum ada di keranjang, tambahkan ke cart
+                $queryAddCart = "INSERT INTO cart (user_id, product_id, quantity, added_at) 
+                                 VALUES (:user_id, :product_id, 1, NOW())";
+                $stmtAddCart = $pdo->prepare($queryAddCart);
+                $stmtAddCart->execute([
+                    ':user_id' => $userId,
+                    ':product_id' => $productId
+                ]);
+            }
+            // Menampilkan popup setelah berhasil menambah produk ke keranjang
+            echo "<script>
+                    document.getElementById('cart-popup').style.display = 'block';
+                  </script>";
+        } catch (PDOException $e) {
+            echo "<script>alert('Terjadi kesalahan: " . $e->getMessage() . "');</script>";
+        }
+    }
+
+    // Menambahkan produk ke favorit
+    if (isset($_GET['add_to_favorite']) && isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+        $productId = $_GET['add_to_favorite'];
+        // Periksa apakah produk sudah ada di favorit
+        $checkQuery = "SELECT * FROM favorite_products WHERE user_id = :user_id AND product_id = :product_id";
+        $checkStmt = $pdo->prepare($checkQuery);
+        $checkStmt->execute([':user_id' => $userId, ':product_id' => $productId]);
+        // Jika produk belum ada di favorit, tambahkan
+        if ($checkStmt->rowCount() == 0) {
+            $insertQuery = "INSERT INTO favorite_products (user_id, product_id) VALUES (:user_id, :product_id)";
+            $insertStmt = $pdo->prepare($insertQuery);
+            $insertStmt->execute([':user_id' => $userId, ':product_id' => $productId]);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -181,6 +259,7 @@
         <link rel="stylesheet" href="assets/css/owl-carousel.css">
         <link rel="stylesheet" href="assets/css/lightbox.css">
         <link rel="stylesheet" href="assets/css/login.css">
+        <link rel="stylesheet" href="assets/css/popup.css">
     </head>
     
     <body>
@@ -221,7 +300,9 @@
                                     <a href="pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
+                                    <a href="account/account.php" id="account-icon">
+                                        <i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i>
+                                    </a>
                                 </li>
                                 <!-- Tombol Login atau Logout -->
                                 <?php if ($userId): ?>
@@ -248,24 +329,36 @@
             </div>
         </header>
 
+        <!-- Popup Session Login -->
+        <div class="popup-overlay" id="login-popup">
+            <div class="popup-content">
+                <p>Silahkan login terlebih dahulu.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
+
         <div class="main-banner" id="top">
             <div class="container-fluid">
                 <div class="row">
-                    <!-- Menampilkan produk terlaris -->
+                    <!-- Menampilkan produk -->
                     <div class="col-lg-6">
                         <div class="left-content">
                             <div class="thumb">
                                 <div class="inner-content">
-                                    <h4><?= htmlspecialchars($productName); ?></h4>
-                                    <span>Produk yang paling laris tahun ini</span>
+                                    <h3><?= $productNameUnique; ?></h3>
                                     <div class="main-border-button">
-                                        <a href="#">Beli Sekarang!</a>
+                                        <a href="pages/product_detail.php?product_id=<?= $productIdUnique; ?>">Lihat</a>
                                     </div>
                                 </div>
-                                <img src="<?= htmlspecialchars($imageUrl); ?>" alt="<?= htmlspecialchars($productName); ?>">
+                                <img src="<?= $imageUrlUnique; ?>" alt="<?= $productNameUnique; ?>">
                             </div>
                         </div>
                     </div>
+                    <?php
+                    } else {
+                        echo "<p>Produk tidak tersedia.</p>";
+                    }
+                    ?>
                     <!-- Menampilkan produk terlaris berdasarkan ukuran -->
                     <div class="col-lg-6">
                         <div class="right-content">
@@ -361,6 +454,7 @@
             </div>
         </div>
 
+        <!-- Keranjang Kecil -->
         <section class="section" id="women">
             <div class="container">
                 <div class="row">
@@ -382,19 +476,32 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
+                                                    <li>
+                                                        <a href="pages/product_detail.php?product_id=<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-eye" style="color: #3B95E4"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-cart" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-shopping-cart" style="color: #59CB2C"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-favorite" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-heart" style="color: #ff4d4d"></i>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <?php
                                                 $images = explode(",", $row['image_url']);
-                                                $first_image = $images[0];
+                                                $first_image = htmlspecialchars(trim($images[0] ?? 'default.jpg'));
                                             ?>
-                                            <img src="assets/images/<?php echo $first_image; ?>" alt="">
+                                            <img src="assets/images/<?= $first_image; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>">
                                         </div>
                                         <div class="down-content">
-                                            <h4><?php echo $row['product_name']; ?></h4>
-                                            <span><?php echo formatRupiah($row['price']); ?></span>
+                                            <h4><?= htmlspecialchars($row['product_name']); ?></h4>
+                                            <span><?= formatRupiah($row['price']); ?></span>
                                         </div>
                                     </div>
                                 <?php endwhile; ?>
@@ -405,6 +512,7 @@
             </div>
         </section>
 
+        <!-- Keranjang Sedang -->
         <section class="section" id="women">
             <div class="container">
                 <div class="row">
@@ -426,19 +534,32 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
+                                                    <li>
+                                                        <a href="pages/product_detail.php?product_id=<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-eye" style="color: #3B95E4"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-cart" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-shopping-cart" style="color: #59CB2C"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-favorite" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-heart" style="color: #ff4d4d"></i>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <?php
                                                 $images = explode(",", $row['image_url']);
-                                                $first_image = $images[0];
+                                                $first_image = htmlspecialchars(trim($images[0] ?? 'default.jpg'));
                                             ?>
-                                            <img src="assets/images/<?php echo $first_image; ?>" alt="">
+                                            <img src="assets/images/<?= $first_image; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>">
                                         </div>
                                         <div class="down-content">
-                                            <h4><?php echo $row['product_name']; ?></h4>
-                                            <span><?php echo formatRupiah($row['price']); ?></span>
+                                            <h4><?= htmlspecialchars($row['product_name']); ?></h4>
+                                            <span><?= formatRupiah($row['price']); ?></span>
                                         </div>
                                     </div>
                                 <?php endwhile; ?>
@@ -449,6 +570,7 @@
             </div>
         </section>
 
+        <!-- Keranjang Besar -->
         <section class="section" id="women">
             <div class="container">
                 <div class="row">
@@ -470,19 +592,32 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
+                                                    <li>
+                                                        <a href="pages/product_detail.php?product_id=<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-eye" style="color: #3B95E4"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-cart" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-shopping-cart" style="color: #59CB2C"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-favorite" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-heart" style="color: #ff4d4d"></i>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <?php
                                                 $images = explode(",", $row['image_url']);
-                                                $first_image = $images[0];
+                                                $first_image = htmlspecialchars(trim($images[0] ?? 'default.jpg'));
                                             ?>
-                                            <img src="assets/images/<?php echo $first_image; ?>" alt="">
+                                            <img src="assets/images/<?= $first_image; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>">
                                         </div>
                                         <div class="down-content">
-                                            <h4><?php echo $row['product_name']; ?></h4>
-                                            <span><?php echo formatRupiah($row['price']); ?></span>
+                                            <h4><?= htmlspecialchars($row['product_name']); ?></h4>
+                                            <span><?= formatRupiah($row['price']); ?></span>
                                         </div>
                                     </div>
                                 <?php endwhile; ?>
@@ -493,6 +628,7 @@
             </div>
         </section>
 
+        <!-- Keranjang Jumbo -->
         <section class="section" id="women">
             <div class="container">
                 <div class="row">
@@ -514,19 +650,32 @@
                                         <div class="thumb">
                                             <div class="hover-content">
                                                 <ul>
-                                                    <li><a href="single-product.html"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
-                                                    <li><a href="single-product.html"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
+                                                    <li>
+                                                        <a href="pages/product_detail.php?product_id=<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-eye" style="color: #3B95E4"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-cart" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-shopping-cart" style="color: #59CB2C"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="add-to-favorite" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                            <i class="fa fa-heart" style="color: #ff4d4d"></i>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <?php
                                                 $images = explode(",", $row['image_url']);
-                                                $first_image = $images[0];
+                                                $first_image = htmlspecialchars(trim($images[0] ?? 'default.jpg'));
                                             ?>
-                                            <img src="assets/images/<?php echo $first_image; ?>" alt="">
+                                            <img src="assets/images/<?= $first_image; ?>" alt="<?= htmlspecialchars($row['product_name']); ?>">
                                         </div>
                                         <div class="down-content">
-                                            <h4><?php echo $row['product_name']; ?></h4>
-                                            <span><?php echo formatRupiah($row['price']); ?></span>
+                                            <h4><?= htmlspecialchars($row['product_name']); ?></h4>
+                                            <span><?= formatRupiah($row['price']); ?></span>
                                         </div>
                                     </div>
                                 <?php endwhile; ?>
@@ -536,6 +685,21 @@
                 </div>
             </div>
         </section>
+
+        <!-- Popup Keranjang -->
+        <div id="cart-popup" class="popup-overlay">
+            <div class="popup-content">
+                <p>Produk berhasil ditambahkan ke keranjang.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
+
+        <div id="favorite-popup" class="popup-overlay">
+            <div class="popup-content">
+                <p>Produk berhasil ditambahkan ke favorit.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
 
         <section class="section" id="explore">
             <div class="container">
@@ -719,6 +883,63 @@
                 }, 500);
                 });
             });
+        </script>
+
+        <!-- Fungsi untuk menambah produk ke keranjang -->
+        <script>
+            document.querySelectorAll('.add-to-cart').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var userId = <?= json_encode($userId); ?>;
+                    var productId = this.getAttribute('data-product-id');
+                    // Jika user belum login, tampilkan popup login
+                    if (!userId) {
+                        document.getElementById('login-popup').style.display = 'block';
+                        return;
+                    }
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'index.php?add_to_cart=' + productId, true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            document.getElementById('cart-popup').style.display = 'block';
+                        } else {
+                            alert('Terjadi kesalahan saat menambah produk ke keranjang');
+                        }
+                    };
+                    xhr.send();
+                });
+            });
+
+            document.querySelectorAll('.add-to-favorite').forEach(function(button) {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+        var userId = <?= json_encode($userId); ?>;
+        var productId = this.getAttribute('data-product-id');
+        
+        // Jika user belum login, tampilkan popup login
+        if (!userId) {
+            document.getElementById('login-popup').style.display = 'block';
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'index.php?add_to_favorite=' + productId, true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById('favorite-popup').style.display = 'block';
+            } else {
+                alert('Terjadi kesalahan saat menambah produk ke favorit');
+            }
+        };
+        xhr.send();
+    });
+});
+
+            function closePopup() {
+                document.getElementById('login-popup').style.display = 'none';
+                document.getElementById('cart-popup').style.display = 'none';
+                document.getElementById('favorite-popup').style.display = 'none';
+            }
         </script>
     </body>
 </html>

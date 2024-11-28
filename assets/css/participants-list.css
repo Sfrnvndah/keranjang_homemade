@@ -1,0 +1,45 @@
+.form-row div {
+    margin-bottom: 15px;
+}
+
+.dropdown-tanggal {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+.btn {
+    border: none;
+    padding: 5px 10px;
+    margin: 2px;
+    margin-bottom: -12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    text-align: center;
+    height: 40px;
+}
+
+.btn-submit-date {
+    background-color: #00827f;
+    color: white;
+}
+
+.btn-submit-date:hover {
+    background-color: #006b66;
+    color: white;
+}

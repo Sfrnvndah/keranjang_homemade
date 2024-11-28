@@ -286,7 +286,7 @@
                 fetch('', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: order_id=${orderId}
+                    body: `order_id=${orderId}`
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -299,7 +299,7 @@
                         month: 'long',
                         day: 'numeric'
                     });
-                    document.getElementById('order-details').querySelector('h2').innerText = Detail Pesanan Tanggal ${orderDateFormatted};
+                    document.getElementById('order-details').querySelector('h2').innerText = `Detail Pesanan Tanggal ${orderDateFormatted}`;
                     detailsBody.innerHTML = '';
                     orderDetails.forEach(item => {
                         const row = `<tr>

@@ -1,0 +1,328 @@
+/* Halaman Checkout */
+.checkout-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+    margin-top: -35px;
+}
+
+.product-detail {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.product-image {
+    max-width: 150px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.product-info h3 {
+    margin: 0 0 10px;
+}
+
+.checkout-header h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00827f;
+}
+
+.checkout-form .form-group {
+    margin-bottom: 15px;
+}
+
+.checkout-form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.payment-info {
+    padding: 20px;
+    background: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.payment-title {
+    font-size: 1.5rem;
+    color: #00827f;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.payment-method {
+    margin-bottom: 20px;
+}
+
+.payment-method h4 {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.payment-method i {
+    color: #00827f;
+    font-size: 1.5rem;
+}
+
+.bank-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.bank-details li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.label {
+    width: 150px;
+    font-weight: bold;
+}
+
+.colon {
+    width: 10px;
+    text-align: center;
+}
+
+.value {
+    flex: 1;
+    text-align: left;
+    color: #333;
+}
+
+.qris-image {
+    display: block;
+    margin: 10px auto;
+    max-width: 200px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.small-text {
+    text-align: center;
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 10px;
+}
+
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #00827f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-submit:hover {
+    background: #006a63;
+}
+
+/* Informasi Pelanggan */
+.customer-info {
+    margin-top: 20px;
+}
+
+.customer-info h3 {
+    margin-bottom: 15px;
+}
+
+.info-item {
+    margin-bottom: 10px;
+}
+
+.info-item strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.info-item hr {
+    border: 0;
+    height: 1px;
+    background-color: #ddd;
+    margin: 10px 0;
+}
+
+/* Container untuk tabel produk */
+.product-table-container {
+    margin-top: 20px;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.product-table th,
+.product-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.product-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.product-table td img.product-image-table {
+    max-width: 50px; /* Ukuran gambar lebih kecil */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Agar gambar terpusat di dalam sel */
+}
+
+.product-table tfoot td {
+    font-weight: bold;
+    text-align: right;
+    background-color: #f9f9f9;
+}
+
+.product-table tfoot td:last-child {
+    text-align: left;
+}
+
+/* New */
+.alert-custom {
+    background-color: #28a745;
+    color: white;
+}
+.order-summary {
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+}
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.section-title {
+    margin-top: 15px;
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #333;
+}
+.form-control, .btn-custom {
+    font-size: 0.875rem;
+}
+.form-check-label {
+    font-size: 0.875rem;
+}
+.order-summary .d-flex {
+    gap: 15px;
+}
+.order-summary p {
+    margin-bottom: 8px;
+}
+.form-label {
+    font-size: 0.875rem;
+}
+
+/* Payment */
+
+.payment-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-title {
+    text-align: center;
+    color: #00827f;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.payment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.payment-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.payment-form input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fefefe;
+}
+
+.payment-form .help-text {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.payment-form .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #00827f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.payment-form .btn-submit:hover {
+    background: #006a63;
+}
+
+.required {
+    color: red;
+}

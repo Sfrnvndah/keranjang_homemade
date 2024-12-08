@@ -1,306 +1,395 @@
 <?php
-// Koneksi ke database
-$server = "localhost";
-$username = "root";
-$password = "";
-$database = "keranjang_homemade";
+    session_start();
+    $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-$conn = mysqli_connect($server, $username, $password, $database);
+    $products = []; // Inisialisasi variabel $products sebagai array kosong
+    $total_amount = 0; // Inisialisasi total
 
-if (!$conn) {
-    die("Koneksi gagal: " . mysqli_connect_error());
-}
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['selected_products'])) {
+            $selectedProducts = json_decode($_POST['selected_products'], true); // Decode JSON menjadi array
 
-// Contoh data pelanggan (untuk sementara hardcoded)
-$user_id = 1;  // ID pengguna yang melakukan pemesanan
-$customer_name = "Pingki Sukmawati";
-$phone_number = "+62 889-8907-0129";
-$address = "Jalan Mawar, RT.002/RW.006, Mrawan, Mayang, Jember, Jawa Timur, ID 62182";
+            if (!empty($selectedProducts)) {
+                // Format harga dan total untuk semua produk
+                foreach ($selectedProducts as $product) {
+                    $product_id = $product['cart_id'];
+                    $product_name = $product['product_name'];
+                    $image_url = $product['image_url'];
+                    $price = $product['price'];
+                    $total_price = $product['total_price'];
+                    $quantity = $product['quantity'];
 
-// Data produk (biasanya ini akan berasal dari keranjang belanja)
-$product_id = 2;  // ID produk yang dibeli
-$price = 50000;   // Harga produk
-$quantity = 2;    // Jumlah produk yang dibeli
+                    // Format harga
+                    $formatted_price = number_format($price, 0, ',', '.');
+                    $formatted_total_price = number_format($total_price, 0, ',', '.');
 
-// Biaya tambahan
-$shipping_cost = 20000; // Biaya pengiriman Cargo
-$discount_shipping = 10000; // Diskon pengiriman
-$service_fee = 1000; // Biaya layanan
+                    // Simpan data produk untuk ditampilkan
+                    $products[] = [
+                        'image_url' => $image_url,
+                        'product_name' => $product_name,
+                        'formatted_price' => $formatted_price,
+                        'quantity' => $quantity,
+                        'total_price' => $total_price, // Simpan total_price untuk perhitungan
+                        'formatted_total_price' => $formatted_total_price,
+                    ];
 
-// Menghitung total pembayaran
-$subtotal = $price * $quantity;
-$total_amount = $subtotal + $shipping_cost - $discount_shipping + $service_fee;
-$status = 'Pending';  // Status pesanan
-$order_date = date('Y-m-d H:i:s');  // Tanggal dan waktu pemesanan
-
-// Variabel untuk menyimpan pesan hasil
-$order_message = '';
-$rekening_number = '';  // Variabel untuk nomor rekening
-$ss_file = ''; // Variabel untuk nama file SS
-
-// Cek jika payment_method tersedia di POST
-$payment_method = isset($_POST['payment_method']) ? $_POST['payment_method'] : '';
-$rekening_number = isset($_POST['rekening_number']) ? $_POST['rekening_number'] : '';
-
-// Menangani aksi tombol "Buat Pesanan" dan menambahkan pesanan ke database
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 1. Menambahkan data pesanan ke tabel 'orders'
-    $order_query = "INSERT INTO orders (user_id, total_amount, status, order_date, payment_method) 
-                    VALUES ($user_id, $total_amount, '$status', '$order_date', '$payment_method')";
-
-    if (mysqli_query($conn, $order_query)) {
-        // Mendapatkan ID pesanan yang baru saja ditambahkan
-        $order_id = mysqli_insert_id($conn);  // ID pesanan yang baru saja dimasukkan ke dalam tabel 'orders'
-
-        // 2. Menambahkan data item pesanan ke tabel 'order_items'
-        $order_item_query = "INSERT INTO order_items (order_id, product_id, quantity) 
-                             VALUES ($order_id, $product_id, $quantity)";
-
-        if (mysqli_query($conn, $order_item_query)) {
-            // Menampilkan pesan setelah pesanan berhasil
-            $order_message = "Pesanan berhasil dibuat! ID Pesanan: $order_id";
-        } else {
-            $order_message = "Error menambahkan item pesanan: " . mysqli_error($conn);
-        }
-    } else {
-        $order_message = "Error menambahkan pesanan: " . mysqli_error($conn);
-    }
-
-    // Menangani upload bukti transfer (SS)
-    if (isset($_FILES['ss_file']) && $_FILES['ss_file']['error'] == 0) {
-        $ss_tmp_name = $_FILES['ss_file']['tmp_name'];
-        $ss_name = $_FILES['ss_file']['name'];
-        $upload_dir = 'uploads/'; // Folder untuk menyimpan file SS
-
-        // Pastikan folder uploads ada
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true); // Membuat folder jika belum ada
-        }
-
-        $ss_file_path = $upload_dir . basename($ss_name);
-
-        // Mengecek ekstensi file
-        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-        $file_extension = strtolower(pathinfo($ss_name, PATHINFO_EXTENSION));
-
-        if (in_array($file_extension, $allowed_extensions)) {
-            if (move_uploaded_file($ss_tmp_name, $ss_file_path)) {
-                // Simpan nama file SS ke dalam database
-                $update_query = "UPDATE orders SET ss_file = '$ss_name' WHERE order_id = $order_id";
-                if (mysqli_query($conn, $update_query)) {
-                    $order_message .= " Bukti transfer berhasil diunggah dan pesanan Anda sedang diproses.";
-                } else {
-                    $order_message .= " Error menyimpan bukti transfer ke database: " . mysqli_error($conn);
+                    // Tambahkan total harga dari produk yang sudah dihitung
+                    $total_amount += $total_price; // Jumlahkan total harga produk
                 }
             } else {
-                $order_message .= " Gagal mengunggah bukti transfer.";
+                echo "Tidak ada data produk.";
+                exit;
             }
         } else {
-            $order_message .= " Ekstensi file tidak diizinkan.";
+            echo "Tidak ada data produk.";
+            exit;
+        }
+    } else {
+        echo "Tidak ada data produk.";
+        exit;
+    }
+
+    include '../database/connection.php';
+
+    // Ambil data user dari database
+    $userData = null;
+    if ($userId) {
+        try {
+            $stmt = $pdo->prepare("SELECT name, phone, address, email FROM users WHERE user_id = :user_id");
+            $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Error fetching user data: " . $e->getMessage());
         }
     }
-}
 
-// Menutup koneksi
-mysqli_close($conn);
+    // Biaya tambahan
+    $shipping_cost = 15000; // Biaya pengiriman Cargo
+    $service_fee = 1000; // Biaya layanan
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout dan Konfirmasi Pesanan</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-    body {
-        background-color: #f8f9fa;
-        font-family: Arial, sans-serif;
-    }
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Check Out</title>
+        <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.css">
+        <link rel="stylesheet" href="../assets/css/templatemo-hexashop.css">
+        <link rel="stylesheet" href="../assets/css/login.css">
+        <link rel="stylesheet" href="../assets/css/popup.css">
+        <link rel="stylesheet" href="../assets/css/review.css">
+        <link rel="stylesheet" href="../assets/css/check-out.css">
+        <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    </head>
 
-    .card-header {
-        background-color: #343a40;
-        color: #fff;
-    }
-
-    .btn-custom {
-        background-color: #007bff;
-        color: white;
-        padding: 10px 20px;
-    }
-
-    .btn-custom:hover {
-        background-color: #0056b3;
-    }
-
-    .alert-custom {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .order-summary {
-        background-color: #f1f1f1;
-        border-radius: 8px;
-        padding: 15px;
-        margin-top: 15px;
-    }
-
-    .product-image {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-    }
-
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .section-title {
-        margin-top: 15px;
-        font-size: 1.125rem;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .table td, .table th {
-        padding: 0.75rem;
-    }
-
-    .form-control, .btn-custom {
-        font-size: 0.875rem;
-    }
-
-    .form-check-label {
-        font-size: 0.875rem;
-    }
-
-    .order-summary .d-flex {
-        gap: 15px;
-    }
-
-    .order-summary p {
-        margin-bottom: 8px;
-    }
-
-    .form-label {
-        font-size: 0.875rem;
-    }
-</style>
-
-
-<div class="container mt-5">
-    <?php if ($order_message): ?>
-        <!-- Pesan Pesanan Berhasil -->
-        <div class="text-center">
-            <h2 class="text-success">Pesanan Berhasil!</h2>
-            <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
-            <p class="lead">ID Pesanan: <?php echo $order_id; ?></p>
-            <p>Pesanan Anda telah diterima dan sedang diproses. Terima kasih atas pembelian Anda!</p>
-            
-            <?php if ($payment_method == 'Transfer Bank' && $rekening_number): ?>
-                <p><strong>Nomor Rekening untuk Pembayaran:</strong> <?php echo $rekening_number; ?></p>
-            <?php endif; ?>
-
-            <!-- Menampilkan pesan berhasil jika bukti transfer telah diunggah -->
-            <?php if (strpos($order_message, 'Bukti transfer berhasil') !== false): ?>
-                <div class="alert alert-success mt-4" role="alert">
-                    Bukti transfer berhasil diunggah dan pesanan Anda sedang diproses.
-                </div>
-            <?php endif; ?>
-
-            <!-- Form untuk unggah bukti transfer -->
-            <div class="mt-4">
-                <h5>Unggah Bukti Transfer</h5>
-                <form method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="ss_file" class="form-label">Pilih Bukti Transfer (SS)</label>
-                        <input type="file" class="form-control" id="ss_file" name="ss_file" required>
+    <body>
+        <header class="header-area header-sticky">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <nav class="main-nav">
+                            <a href="../index.php" class="logo">
+                                <img src="../assets/images/pak-tara-craft-logo-black-no-background.png">
+                            </a>
+                            <ul class="nav">
+                                <li class="scroll-to-section"><a href="../index.php">Home</a></li>
+                                <li class="scroll-to-section"><a href="product_lists.php">Product</a></li>
+                                <li class="submenu">
+                                    <a href="javascript:;">Pages</a>
+                                    <ul>
+                                        <li><a href="../content/about_us.php">About Us</a></li>
+                                        <li><a href="../content/training.php">Training</a></li>
+                                    </ul>
+                                </li>
+                                <!-- icons -->
+                                <li class="scroll-to-section">
+                                    <a href="cart.php" id="cart-icon">
+                                        <i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #59CB2C;" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="scroll-to-section">
+                                    <a href="favorite_product.php" id="favorite-icon">
+                                        <i class="fa fa-heart" style="font-size: 1.5em; color: #ff4d4d;" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="scroll-to-section">
+                                    <a href="../account/account.php" id="account-icon">
+                                        <i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <!-- Tombol Login atau Logout -->
+                                <?php if ($userId): ?>
+                                    <form action="../form/logout.php" method="post" style="display: inline;">
+                                        <button type="submit" class="btn-logout">Logout</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="../form/login.php" class="btn-login">Login</a>
+                                <?php endif; ?>
+                            </ul>
+                            <!-- Session ID user -->
+                            <?php if ($userId): ?>
+                                <span style="color: white; font-size: 10px;">
+                                    <?= htmlspecialchars($userId); ?>
+                                </span>
+                            <?php else: ?>
+                                <span style="color: white; font-size: 10px;">
+                                    User belum login
+                                </span>
+                            <?php endif; ?>
+                        </nav>
                     </div>
-                    <button type="submit" class="btn btn-custom">Unggah Bukti Transfer</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-heading" id="top">
+            <div class="container"></div>
+        </div>
+
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h2>Checkout</h2>
+            </div>
+
+            <!-- Tabel Detail Produk -->
+            <div class="product-table-container">
+                <h3>Detail Produk</h3>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Gambar</th>
+                            <th>Nama Produk</th>
+                            <th>Harga Satuan</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($products as $product): ?>
+                            <tr>
+                                <td>
+                                    <img src="../assets/images/<?= htmlspecialchars($product['image_url']) ?>" 
+                                        alt="<?= htmlspecialchars($product['product_name']) ?>" 
+                                        class="product-image-table">
+                                </td>
+                                <td><?= htmlspecialchars($product['product_name']) ?></td>
+                                <td>Rp <?= $product['formatted_price'] ?></td> <!-- Harga satuan -->
+                                <td><?= htmlspecialchars($product['quantity']) ?></td>
+                                <td>Rp <?= $product['formatted_total_price'] ?></td> <!-- Subtotal -->
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4"><strong>Total</strong></td>
+                            <td><strong>Rp <?= number_format($total_amount, 0, ',', '.') ?></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Informasi Pelanggan -->
+            <div class="customer-info">
+                <h3>Informasi Pelanggan</h3>
+                <div class="info-item">
+                    <strong>Nama :</strong>
+                    <p><?= htmlspecialchars($userData['name']) ?></p>
+                    <hr>
+                </div>
+                <div class="info-item">
+                    <strong>Alamat :</strong>
+                    <p><?= nl2br(htmlspecialchars($userData['address'])) ?></p>
+                    <hr>
+                </div>
+                <div class="info-item">
+                    <strong>Nomor Telepon :</strong>
+                    <p><?= htmlspecialchars($userData['phone']) ?></p>
+                    <hr>
+                </div>
+                <div class="info-item">
+                    <strong>Email :</strong>
+                    <p><?= htmlspecialchars($userData['email']) ?></p>
+                    <hr>
+                </div>
+            </div>
+
+            <!-- Pengiriman -->
+            <div class="order-summary">
+                <h5 class="section-title" style="margin-bottom: 15px;">Pengiriman</h5>
+                <p><strong>Cargo : </strong>Rp <?php echo number_format($shipping_cost, 0, ',', '.'); ?></p>
+                <small class="text-muted">Garansi tiba : 3-5 Hari Kerja</small>
+            </div>
+
+            <!-- Rincian Pembayaran -->
+            <div class="order-summary">
+                <h5 class="section-title" style="margin-bottom: 15px">Rincian Pembayaran</h5>
+                <table class="table">
+                    <tr>
+                        <td>Subtotal Produk</td>
+                        <td class="text-end">Rp <?= number_format($total_amount, 0, ',', '.') ?></td>
+                    </tr>
+                    <tr>
+                        <td>Subtotal Pengiriman</td>
+                        <td class="text-end">Rp <?php echo number_format($shipping_cost, 0, ',', '.'); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Biaya Layanan</td>
+                        <td class="text-end">Rp <?php echo number_format($service_fee, 0, ',', '.'); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Total Pembayaran</th>
+                        <th class="text-end">Rp <?= number_format($total_amount + $shipping_cost + $service_fee, 0, ',', '.') ?></th>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Informasi Pembayaran -->
+            <div class="payment-info card">
+                <h3 class="payment-title">Metode Pembayaran</h3>
+                <div class="payment-method">
+                    <h4><i class="fa fa-university"></i> Transfer Bank</h4>
+                    <ul class="bank-details">
+                        <li>
+                            <span class="label">Bank</span> 
+                            <span class="colon">:</span> 
+                            <span class="value">BCA</span>
+                        </li>
+                        <li>
+                            <span class="label">Nomor Rekening</span> 
+                            <span class="colon">:</span> 
+                            <span class="value">098765432112</span>
+                        </li>
+                        <li>
+                            <span class="label">Nama Pemilik</span> 
+                            <span class="colon">:</span> 
+                            <span class="value">Pak Tara Craft</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="payment-method">
+                    <h4><i class="fa fa-qrcode"></i>QRIS</h4>
+                    <img src="../assets/images/qris.png" alt="QRIS" class="qris-image">
+                    <p class="small-text">Atau gunakan QRIS untuk melakukan pembayaran</p>
+                </div>
+            </div>
+
+            <!-- Upload bukti pembayaran -->
+            <div class="payment-info card">
+                <h2 class="payment-title">Upload Bukti Pembayaran</h2>
+                
+                <!-- Form Pesanan -->
+                <form id="checkout-form" method="POST" action="order_process.php" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="proof_of_payment">Bukti Pembayaran <span class="required">*</span></label>
+                        <input type="file" name="proof_of_payment" id="proof_of_payment" accept="image/*" required>
+                        <small class="help-text">Unggah gambar bukti pembayaran dalam format JPG, PNG, atau JPEG.</small>
+                    </div>
+                    
+                    <input type="hidden" name="selected_products" value="<?= htmlspecialchars(json_encode($selectedProducts)) ?>">
+                    <input type="hidden" name="total_amount" value="<?= htmlspecialchars($total_amount + $shipping_cost + $service_fee) ?>">
+                    
+                    <!-- Tombol Pesan -->
+                    <button type="submit" id="submit-button" class="btn-submit">Pesan</button>
                 </form>
             </div>
-
-            <a href="/keranjang_homemade/index.php" class="btn btn-custom mt-3">Kembali ke Beranda</a>
-        </div>
-    <?php else: ?>
-        <!-- Informasi Pengiriman -->
-        <div class="order-summary">
-            <h5 class="section-title">Alamat Pengiriman</h5>
-            <p><strong><?php echo $customer_name; ?></strong></p>
-            <p><?php echo $phone_number; ?></p>
-            <p><?php echo $address; ?></p>
         </div>
 
-        <!-- Detail Produk -->
-        <div class="order-summary">
-            <h5 class="section-title">Detail Produk</h5>
-            <div class="d-flex align-items-center">
-                <img src="https://via.placeholder.com/100" alt="Produk" class="product-image mr-3">
-                <div>
-                    <h6 class="mb-1"><?php echo "Produk ID: $product_id"; ?></h6>
-                    <p class="mb-1 text-muted">Rp<?php echo number_format($price, 0, ',', '.'); ?> x <?php echo $quantity; ?></p>
-                    <p class="mb-0 text-danger">Rp<?php echo number_format($subtotal, 0, ',', '.'); ?></p>
-                </div>
+        <!-- Pop-up Peringatan -->
+        <div class="popup-overlay" id="checkout-popup" style="display: none;">
+            <div class="popup-content">
+                <p>Upload bukti pembayaran terlebih dahulu!</p>
+                <button onclick="closePopup()">Tutup</button>
             </div>
         </div>
 
-        <!-- Opsi Pengiriman -->
-        <div class="order-summary">
-            <h5 class="section-title">Opsi Pengiriman</h5>
-            <p><strong>Cargo:</strong> Rp<?php echo number_format($shipping_cost, 0, ',', '.'); ?></p>
-            <small class="text-muted">Garansi tiba: 3-5 Hari Kerja</small>
-        </div>
-
-        <!-- Rincian Pembayaran -->
-        <div class="order-summary">
-            <h5 class="section-title">Rincian Pembayaran</h5>
-            <table class="table">
-                <tr>
-                    <td>Subtotal untuk Produk</td>
-                    <td class="text-end">Rp<?php echo number_format($subtotal, 0, ',', '.'); ?></td>
-                </tr>
-                <tr>
-                    <td>Subtotal Pengiriman</td>
-                    <td class="text-end">Rp<?php echo number_format($shipping_cost, 0, ',', '.'); ?></td>
-                </tr>
-                <tr>
-                    <td>Biaya Layanan</td>
-                    <td class="text-end">Rp<?php echo number_format($service_fee, 0, ',', '.'); ?></td>
-                </tr>
-                <tr>
-                    <td>Diskon Pengiriman</td>
-                    <td class="text-end">-Rp<?php echo number_format($discount_shipping, 0, ',', '.'); ?></td>
-                </tr>
-                <tr>
-                    <th>Total Pembayaran</th>
-                    <th class="text-end">Rp<?php echo number_format($total_amount, 0, ',', '.'); ?></th>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Pilih Metode Pembayaran -->
-        <div class="order-summary">
-            <h5 class="section-title">Metode Pembayaran</h5>
-            <form method="post">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="payment_method" id="transfer" value="Transfer Bank" checked>
-                    <label class="form-check-label" for="transfer">
-                        Transfer Bank
-                    </label>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="first-item">
+                            <div class="logo">
+                                <img src="../assets/images/pak-tara-craft-logo-white-no-background.png" alt="hexashop ecommerce templatemo">
+                            </div>
+                            <ul>
+                                <li><a href="https://www.google.co.id/maps/place/Gg.+Melon,+Pelindu,+Karangrejo,+Kec.+Sumbersari,+Kabupaten+Jember,+Jawa+Timur+68124/@-8.1905765,113.7204516,14z/data=!4m6!3m5!1s0x2dd696708d1bdf53:0x186a95d951b7d20b!8m2!3d-8.1877199!4d113.7282515!16s%2Fg%2F1q62d1ll9?entry=ttu&g_ep=EgoyMDI0MTEwNi4wIKXMDSoASAFQAw%3D%3D">Gg. Melon, Pelindu, Karangrejo, Kec. Sumbersari, Kabupaten Jember, Jawa Timur 68124, Indonesia</a></li>
+                                <li><a href="#">lidyaningrum8379@gmail.com</a></li>
+                                <li><a href="https://wa.me/c/628976374888">+62 897-6374-888</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <h4>Shopping &amp; Categories</h4>
+                        <ul>
+                            <li><a href="product_lists.php?query=&category%5B%5D=1">Keranjang Kecil</a></li>
+                            <li><a href="product_lists.php?query=&category%5B%5D=2">Keranjang Sedang</a></li>
+                            <li><a href="product_lists.php?query=&category%5B%5D=3">Keranjang Besar</a></li>
+                            <li><a href="product_lists.php?query=&category%5B%5D=4">Keranjang Jumbo</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><a href="#">Homepage</a></li>
+                            <li><a href="../content/about_us.php">About Us</a></li>
+                            <li><a href="../content/contact_us.php">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3">
+                        <h4>Useful Information</h4>
+                        <ul>
+                            <li><a href="#">Customer Support</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Training Information</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="under-footer">
+                            <p>Copyright © 2024 Pak Tara Craft., Ltd. All Rights Reserved. 
+                            <ul>
+                                <li>
+                                    <a href="https://www.instagram.com/paktaracraft?igsh=MTFjaHFtNHo5dTJhOQ==">
+                                        <i class="fa fa-instagram"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://wa.me/c/628976374888">
+                                        <i class="fa fa-whatsapp"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-3">
-                    <label for="rekening_number">Nomor Rekening</label>
-                    <input type="text" class="form-control" id="rekening_number" name="rekening_number" required>
-                </div>
-                <button type="submit" class="btn btn-custom mt-3">Buat Pesanan</button>
-            </form>
-        </div>
-    <?php endif; ?>
-</div>
+            </div>
+        </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
-</body>
+        <script src="../assets/js/jquery-2.1.0.min.js"></script>
+        <script src="../assets/js/bootstrap.min.js"></script>
+
+        <script>
+            // Fungsi untuk menutup pop-up
+            function closePopup() {
+                document.getElementById('checkout-popup').style.display = 'none';
+            }
+
+            // Validasi sebelum mengirim form
+            document.getElementById('submit-button').addEventListener('click', function () {
+                const fileInput = document.getElementById('proof_of_payment');
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    // Tampilkan pop-up jika file belum diunggah
+                    document.getElementById('checkout-popup').style.display = 'block';
+                } else {
+                    // Kirim form jika file sudah diunggah
+                    document.getElementById('checkout-form').submit();
+                }
+            });
+        </script>
+    </body>
 </html>

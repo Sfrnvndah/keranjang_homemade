@@ -279,6 +279,7 @@ if (isset($_GET['page'])) {
                 ?>
             </tbody>
         </table>
+        
 
         <h2>Pesanan Offline</h2>
         <table class="table table-striped">

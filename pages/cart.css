@@ -1,0 +1,85 @@
+/* Tambahkan margin untuk header */
+.shopping-cart-title {
+    color: #00827f;
+    margin-top: 150px;
+    margin-bottom: 50px;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Styling khusus untuk tabel di Shopping Cart */
+.custom-shopping-cart-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: auto;
+}
+
+.custom-shopping-cart-table th,
+.custom-shopping-cart-table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 15px;
+}
+
+.custom-shopping-cart-table th {
+    background-color: #00827f; /* Warna header tabel */
+    color: #fff;
+    font-weight: bold;
+}
+
+.custom-shopping-cart-table td {
+    border: 1px solid #ddd;
+}
+
+.custom-shopping-cart-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Warna belang untuk baris */
+}
+
+.custom-shopping-cart-table tr:hover {
+    background-color: #e9f5f5; /* Warna saat hover */
+}
+
+/* Gambar produk dalam tabel */
+.cart-product-image {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+/* Styling input jumlah */
+.cart-quantity {
+    width: 70px;
+    text-align: center;
+}
+
+/* Tombol remove lebih rapi */
+.btn-danger {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+/* Container untuk tombol + dan - */
+.quantity-container {
+    display: flex;
+    align-items: center;  /* Menjaga semua elemen ter-align secara vertikal */
+    justify-content: center;  /* Mengatur elemen dalam satu baris */
+}
+
+/* Gaya untuk tombol - dan + */
+.quantity-container .btn {
+    width: 30px;  /* Menentukan lebar tombol */
+    height: 30px;  /* Menentukan tinggi tombol */
+    padding: 0;  /* Menghapus padding default pada tombol */
+    font-size: 20px;  /* Ukuran font untuk tanda + dan - */
+    text-align: center;  /* Menjaga tanda + dan - tetap terpusat */
+}
+
+/* Gaya untuk input angka */
+.quantity-container input[type="number"] {
+    width: 50px;  /* Lebar input angka */
+    height: 30px;  /* Tinggi input angka agar selaras dengan tombol */
+    text-align: center;  /* Mengatur teks dalam input agar terpusat */
+    margin: 0 5px;  /* Menambahkan jarak antara input dan tombol */
+}

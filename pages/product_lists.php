@@ -44,6 +44,60 @@
     if (!$categories) {
         $categories = [];
     }
+
+    // Memasukkan produk ke keranjang
+    if (isset($_GET['add_to_cart']) && $userId) {
+        $productId = (int)$_GET['add_to_cart'];
+        try {
+            // Cek apakah produk sudah ada di keranjang
+            $queryCheckCart = "SELECT quantity FROM cart WHERE user_id = :user_id AND product_id = :product_id";
+            $stmtCheckCart = $pdo->prepare($queryCheckCart);
+            $stmtCheckCart->execute([
+                ':user_id' => $userId,
+                ':product_id' => $productId
+            ]);
+            if ($stmtCheckCart->rowCount() > 0) {
+                // Jika sudah ada, update jumlah produk
+                $queryUpdateCart = "UPDATE cart SET quantity = quantity + 1 WHERE user_id = :user_id AND product_id = :product_id";
+                $stmtUpdateCart = $pdo->prepare($queryUpdateCart);
+                $stmtUpdateCart->execute([
+                    ':user_id' => $userId,
+                    ':product_id' => $productId
+                ]);
+            } else {
+                // Jika produk belum ada di keranjang, tambahkan ke cart
+                $queryAddCart = "INSERT INTO cart (user_id, product_id, quantity, added_at) 
+                                 VALUES (:user_id, :product_id, 1, NOW())";
+                $stmtAddCart = $pdo->prepare($queryAddCart);
+                $stmtAddCart->execute([
+                    ':user_id' => $userId,
+                    ':product_id' => $productId
+                ]);
+            }
+            // Menampilkan popup setelah berhasil menambah produk ke keranjang
+            echo "<script>
+                    document.getElementById('cart-popup').style.display = 'block';
+                  </script>";
+        } catch (PDOException $e) {
+            echo "<script>alert('Terjadi kesalahan: " . $e->getMessage() . "');</script>";
+        }
+    }
+
+    // Menambahkan produk ke favorit
+    if (isset($_GET['add_to_favorite']) && isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+        $productId = $_GET['add_to_favorite'];
+        // Periksa apakah produk sudah ada di favorit
+        $checkQuery = "SELECT * FROM favorite_products WHERE user_id = :user_id AND product_id = :product_id";
+        $checkStmt = $pdo->prepare($checkQuery);
+        $checkStmt->execute([':user_id' => $userId, ':product_id' => $productId]);
+        // Jika produk belum ada di favorit, tambahkan
+        if ($checkStmt->rowCount() == 0) {
+            $insertQuery = "INSERT INTO favorite_products (user_id, product_id) VALUES (:user_id, :product_id)";
+            $insertStmt = $pdo->prepare($insertQuery);
+            $insertStmt->execute([':user_id' => $userId, ':product_id' => $productId]);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +116,8 @@
         <link rel="stylesheet" href="../assets/css/lightbox.css">
         <link rel="stylesheet" href="../assets/css/searchbar.css">
         <link rel="stylesheet" href="../assets/css/login.css">
+        <link rel="stylesheet" href="../assets/css/popup.css">
+        <link rel="icon" type="image/png" href="../assets/images/logo.png">
     </head>
     
     <body>
@@ -70,31 +126,34 @@
                 <div class="row">
                     <div class="col-12">
                         <nav class="main-nav">
-                            <a href="index.php" class="logo">
+                            <a href="../index.php" class="logo">
                                 <img src="../assets/images/pak-tara-craft-logo-black-no-background.png">
                             </a>
                             <ul class="nav">
-                                <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
-                                <li class="submenu">
-                                    <a href="javascript:;">Product</a>
-                                    <ul>
-                                        <li><a href="pages/product_lists.php">Product Lists</a></li>
-                                        <li><a href="pages/check_out.php">Check Out</a></li>
-                                    </ul>
-                                </li>
+                                <li class="scroll-to-section"><a href="../index.php">Home</a></li>
+                                <li class="scroll-to-section"><a href="#" class="active">Product</a></li>
                                 <li class="submenu">
                                     <a href="javascript:;">Pages</a>
                                     <ul>
-                                        <li><a href="content/about_us.php">About Us</a></li>
-                                        <li><a href="content/contact_us.php">Contact Us</a></li>
-                                        <li><a href="content/training.php">Training</a></li>
+                                        <li><a href="../content/about_us.php">About Us</a></li>
+                                        <li><a href="../content/training.php">Training</a></li>
                                     </ul>
                                 </li>
+                                <!-- icons -->
                                 <li class="scroll-to-section">
-                                    <a href="pages/cart.php"><i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
+                                    <a href="cart.php" id="cart-icon">
+                                        <i class="fa fa-shopping-cart" style="font-size: 1.5em; color: #59CB2C;" aria-hidden="true"></i>
+                                    </a>
                                 </li>
                                 <li class="scroll-to-section">
-                                    <a href="account/account.php"><i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i></a>
+                                    <a href="favorite_product.php" id="favorite-icon">
+                                        <i class="fa fa-heart" style="font-size: 1.5em; color: #ff4d4d;" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="scroll-to-section">
+                                    <a href="../account/account.php" id="account-icon">
+                                        <i class="fa fa-user" style="font-size: 1.5em; color: #00827f;" aria-hidden="true"></i>
+                                    </a>
                                 </li>
                                 <!-- Tombol Login atau Logout -->
                                 <?php if ($userId): ?>
@@ -168,8 +227,22 @@
                                 <div class="thumb">
                                     <div class="hover-content">
                                         <ul>
-                                            <li><a href="product_detail.php?product_id=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-eye" style="color: #00827f"></i></a></li>
-                                            <li><a href="cart.php?add=<?= htmlspecialchars($row['product_id']) ?>"><i class="fa fa-shopping-cart" style="color: #00827f"></i></a></li>
+                                        <li>
+                                            <li>
+                                                <a href="../pages/product_detail.php?product_id=<?= htmlspecialchars($row['product_id']); ?>">
+                                                    <i class="fa fa-eye" style="color: #3B95E4"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="add-to-cart" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                    <i class="fa fa-shopping-cart" style="color: #59CB2C"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="add-to-favorite" data-product-id="<?= htmlspecialchars($row['product_id']); ?>">
+                                                    <i class="fa fa-heart" style="color: #ff4d4d"></i>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <img src="../assets/images/<?= htmlspecialchars($firstImage) ?>" alt="<?= htmlspecialchars($row['product_name']) ?>">
@@ -183,7 +256,7 @@
                         <?php endwhile; ?>
                     </div>
 
-                    <!-- Pagination -->
+                    <!-- Pagination categories -->
                     <div class="col-lg-12">
                         <div class="pagination">
                             <ul>
@@ -204,6 +277,30 @@
                 </div>
             </div>
         </section>
+
+        <!-- Popup Session Login -->
+        <div class="popup-overlay" id="login-popup">
+            <div class="popup-content">
+                <p>Silahkan login terlebih dahulu.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Popup Keranjang -->
+        <div id="cart-popup" class="popup-overlay">
+            <div class="popup-content">
+                <p>Produk berhasil ditambahkan ke keranjang.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Popup favorit -->
+        <div id="favorite-popup" class="popup-overlay">
+            <div class="popup-content">
+                <p>Produk berhasil ditambahkan ke favorit.</p>
+                <button onclick="closePopup()">Tutup</button>
+            </div>
+        </div>
 
         <footer>
             <div class="container">
@@ -232,9 +329,9 @@
                     <div class="col-lg-3">
                         <h4>Useful Links</h4>
                         <ul>
-                            <li><a href="#">Homepage</a></li>
-                            <li><a href="content/about_us.php">About Us</a></li>
-                            <li><a href="content/contact_us.php">Contact Us</a></li>
+                            <li><a href="../index.php">Homepage</a></li>
+                            <li><a href="../content/about_us.php">About Us</a></li>
+                            <li><a href="../content/training.php">Training</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3">
@@ -294,6 +391,107 @@
                     }, 500);
                 });
             });
+        </script>
+
+        <script>
+            // Fungsi untuk menambah produk ke keranjang
+            document.querySelectorAll('.add-to-cart').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var userId = <?= json_encode($userId); ?>;
+                    var productId = this.getAttribute('data-product-id');
+                    // Jika user belum login, tampilkan popup login
+                    if (!userId) {
+                        document.getElementById('login-popup').style.display = 'block';
+                        return;
+                    }
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'product_lists.php?add_to_cart=' + productId, true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            document.getElementById('cart-popup').style.display = 'block';
+                        } else {
+                            alert('Terjadi kesalahan saat menambah produk ke keranjang');
+                        }
+                    };
+                    xhr.send();
+                });
+            });
+
+            // Fungsi untuk menambah produk ke favorit
+            document.querySelectorAll('.add-to-favorite').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var userId = <?= json_encode($userId); ?>;
+                    var productId = this.getAttribute('data-product-id');
+                    
+                    // Jika user belum login, tampilkan popup login
+                    if (!userId) {
+                        document.getElementById('login-popup').style.display = 'block';
+                        return;
+                    }
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'product_lists.php?add_to_favorite=' + productId, true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            document.getElementById('favorite-popup').style.display = 'block';
+                        } else {
+                            alert('Terjadi kesalahan saat menambah produk ke favorit');
+                        }
+                    };
+                    xhr.send();
+                });
+            });
+
+            function closePopup() {
+                document.getElementById('login-popup').style.display = 'none';
+                document.getElementById('cart-popup').style.display = 'none';
+                document.getElementById('favorite-popup').style.display = 'none';
+            }
+        </script>
+
+        <!-- Session login icon -->
+        <script>
+            // Session keranjang
+            document.getElementById('cart-icon').addEventListener('click', function(event) {
+                event.preventDefault();
+                var userId = <?= json_encode($userId); ?>;
+                if (!userId) {
+                    document.getElementById('login-popup').style.display = 'block';
+                } else {
+                    window.location.href = "../pages/cart.php";
+                }
+            });
+
+            // Session favorite
+            document.getElementById('favorite-icon').addEventListener('click', function(event) {
+                event.preventDefault();
+                var userId = <?= json_encode($userId); ?>;
+                if (!userId) {
+                    document.getElementById('login-popup').style.display = 'block';
+                } else {
+                    window.location.href = "../pages/favorite_product.php";
+                }
+            });
+
+            // Session keranjang
+            document.getElementById('account-icon').addEventListener('click', function(event) {
+                event.preventDefault();
+                var userId = <?= json_encode($userId); ?>;
+                if (!userId) {
+                    document.getElementById('login-popup').style.display = 'block';
+                } else {
+                    window.location.href = "../account/account.php";
+                }
+            });
+
+            // Fungsi untuk menutup popup
+            function closePopup() {
+                document.getElementById('login-popup').style.display = 'none';
+                document.getElementById('cart-popup').style.display = 'none';
+                document.getElementById('favorite-popup').style.display = 'none';
+            }
         </script>
     </body>
 </html>

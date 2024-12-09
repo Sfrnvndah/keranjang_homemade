@@ -1,0 +1,107 @@
+.status-pending {
+    color: #fff;
+    background-color: #FE9900;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.status-completed {
+    color: #fff;
+    background-color: #6AC546;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.status-cancelled {
+    color: #fff;
+    background-color: #D20103;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* Dropdown status */
+select#filter-status {
+    width: auto;
+    min-width: 120px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+select#filter-status:focus {
+    border-color: #007bff;
+}
+
+/* Input tanggal */
+input[type="date"] {
+    width: auto;
+    min-width: 150px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+    margin-bottom: 1px;
+}
+
+input[type="date"]:focus {
+    border-color: #00827f;
+}
+
+/* Tombol cari */
+button[type="submit"] {
+    padding: 6px 20px;
+    background-color: #00827f;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #005F5C;
+}
+
+/* Atur label */
+label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: -1px;
+}
+
+/* Responsive layout untuk tampilan kecil */
+@media (max-width: 768px) {
+    form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    select#filter-status,
+    input[type="date"],
+    button[type="submit"] {
+        width: 100%;
+    }
+}

@@ -1,0 +1,215 @@
+.admin-profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin-top: -130px;
+}
+
+/* Kartu profil */
+.admin-profile-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 50px;
+    width: 1000px;
+}
+
+.admin-profile-card-header {
+    background-color: #00827f;
+    color: #fff;
+    text-align: center;
+    padding: 15px 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.admin-profile-card-body {
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.admin-profile-card-body p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* Tabel Profil */
+.admin-profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.admin-profile-table th,
+.admin-profile-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.admin-profile-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+}
+
+.admin-profile-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.admin-profile-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Tombol */
+.admin-profile-btn {
+    display: block;
+    width: 130px;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-profile-btn-warning {
+    background-color: #00827f;
+    color: #fff;
+    margin-top: -10px;
+    height: 40px;
+    text-align: center;
+    font-size: small;
+}
+
+.admin-profile-btn-warning:hover {
+    background-color: #005F5C;
+}
+
+.admin-profile-btn-delete {
+    background-color: #E4080A;
+    color: #fff;
+    margin-left: 700px;
+    margin-top: -10px;
+    height: 40px;
+    text-align: center;
+    font-size: small;
+}
+
+.admin-profile-btn-delete:hover {
+    background-color: #B50103;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-profile-card {
+        margin: 20px;
+    }
+
+    .admin-profile-card-header {
+        font-size: 20px;
+    }
+
+    .admin-profile-card-body p {
+        font-size: 14px;
+    }
+}
+
+/* edit popup */
+.edit-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.edit-popup {
+    background: #fff;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: left;
+}
+
+
+.edit-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.edit-popup-header h3 {
+    margin: 0;
+}
+
+.close-popup-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.edit-popup-body .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-popup-body .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.edit-popup-body .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.edit-popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-save {
+    background-color: #00827f;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #ddd;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-profile-btn-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
